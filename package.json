@@ -1,0 +1,15 @@
+{
+  "name": "React Native CSS",
+  "version": "1.0.0",
+  "description": "CSS style your React Components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "css-parse": "^2.0.0",
+    "to-camel-case": "~0.2.0"
+  }
+}
