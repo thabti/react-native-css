@@ -1,7 +1,7 @@
 var styeact = require('./index');
-
-var result = styeact('./stylesheet.css', function(data) {
-  console.log(data)
-});
-
-console.log(result)
+// promise way
+styeact('./stylesheet.css').then(function json(data) {
+  console.log(data);
+}, function error(err) {
+  console.log(err);
+})

@@ -1,5 +1,5 @@
 {
-  "name": "React Native CSS",
+  "name": "React-Native-CSS",
   "version": "1.0.0",
   "description": "CSS style your React Components",
   "main": "index.js",
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "css-parse": "^2.0.0",
+    "es6-promise": "^2.1.0",
     "to-camel-case": "~0.2.0"
   }
 }
