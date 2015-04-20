@@ -40,17 +40,20 @@ function _isNumeric(num){
 
 module.exports = function ReactStyleInCss(filePath) {
 
-  return new Promise(function(resolve, reject) {
-    fs.readFile(filePath, function (err, data) {
-      if (err) {
-        reject(err)
-      } else {
-        var source = data.toString();
-        var result = parseCss(source.replace(/\r?\n|\r/g, ""));
-        resolve(result);
-      }
-    });
-  });
+  var source = fs.readFileSync(filePath).toString();
+  return parseCss(source.replace(/\r?\n|\r/g, ""));
+
+  // return new Promise(function(resolve, reject) {
+  //   fs.readFile(filePath, function (err, data) {
+  //     if (err) {
+  //       reject(err)
+  //     } else {
+  //       var source = data.toString();
+  //       var result = parseCss(source.replace(/\r?\n|\r/g, ""));
+  //       resolve(result);
+  //     }
+  //   });
+  // });
 
 
 }
