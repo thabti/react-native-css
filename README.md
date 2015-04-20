@@ -35,9 +35,9 @@ to
 
 # then?
 ```js
+var styles = require('react-native-css ')('./stylesheet.css')
 
-var styles = {"description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}}
-
+ //{"description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}}
 
 
 class SearchPage extends Component {
@@ -52,8 +52,5 @@ class SearchPage extends Component {
     );
   }
 }
-
-
-
 
 ```
