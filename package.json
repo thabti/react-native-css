@@ -28,7 +28,7 @@
     "ios"
   ],
   "bin": {
-    "rncss": "./bin/react-native-css",
+    "rncss": "./bin/react-native-css"
   },
   "bugs": {
     "url": "https://github.com/sabeurthabti/react-native-css/issues"
