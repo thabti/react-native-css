@@ -1,0 +1,12 @@
+description {
+  margin-bottom: 20;
+  font-size: 18;
+  text-align: center;
+  color: #656656;
+}
+
+container {
+  padding: 30;
+  margin-top: 65;
+  align-items: center;
+}

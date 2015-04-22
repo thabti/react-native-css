@@ -41,8 +41,9 @@ function _isNumeric(num){
 module.exports = function ReactStyleInCss(filePath, outputFilePath) {
 
   var outputFilePath = outputFilePath || 'style.js';
+
   var source = fs.readFileSync(filePath).toString();
-  var style = parseCss(source.replace(/\r?\n|\r/g, "");
+  var style = parseCss(source.replace(/\r?\n|\r/g, ""));
 
   var wstream = fs.createWriteStream(outputFilePath);
   wstream.write("module.exports = require('react-native').StyleSheet.create(" + style + ");");

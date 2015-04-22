@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var argv = require('minimist')(process.argv.slice(2));
+var input = path.resolve(process.cwd(), argv['i']);
+var output = path.resolve(process.cwd(), argv['o']);
+
+
+
+var rnc = require('../index')(input, output);
