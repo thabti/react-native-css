@@ -12,7 +12,8 @@
     "css-parse": "^2.0.0",
     "es6-promise": "^2.1.0",
     "minimist": "^1.1.1",
-    "to-camel-case": "~0.2.0"
+    "to-camel-case": "~0.2.0",
+    "watch": "^0.16.0"
   },
   "devDependencies": {},
   "repository": {
@@ -28,7 +29,7 @@
     "ios"
   ],
   "bin": {
-    "rncss": "./bin/react-native-css"
+    "react-native-css": "./bin/react-native-css"
   },
   "bugs": {
     "url": "https://github.com/sabeurthabti/react-native-css/issues"

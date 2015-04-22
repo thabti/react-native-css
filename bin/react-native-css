@@ -1,10 +1,38 @@
 #!/usr/bin/env node
-
+var rnc = require('../index');
+var pkg = require('../package.json');
 var path = require('path');
+var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
-var input = path.resolve(process.cwd(), argv['i']);
-var output = path.resolve(process.cwd(), argv['o']);
+
+var help = argv['h'] || argv['help'];
+var watch = argv['w'];
+
+if(help) {
+  console.log('React-native-css - v' + pkg.version);
+
+  console.log('\nCompile and watch: \n ./node_modules/.bin/react-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE -w  \nCompile once: \n./node_modules/.bin/react-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE\n ')
+  console.log('real example: ./node_modules/.bin/react-native-css -i ../css/main.css -o ../styles/main.js -w ');
+
+}
+
+if(argv['i'] && argv['o']) {
+  console.log('React-native-css - v' + pkg.version);
+  console.log('ctrl + c to exit');
 
 
+  var input = path.resolve(process.cwd(), argv['i']);
+  var output = path.resolve(process.cwd(), argv['o']);
+  rnc(input, output);
 
-var rnc = require('../index')(input, output);
+  if(watch) {
+    fs.watch(process.cwd(), function (event, filename) {
+      if (filename === argv['i'] ) {
+        console.log(filename, ' compiling');
+
+        rnc(input, output);
+      }
+    });
+
+  }
+}
