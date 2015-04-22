@@ -38,22 +38,14 @@ function _isNumeric(num){
     return !isNaN(num)
 }
 
-module.exports = function ReactStyleInCss(filePath) {
+module.exports = function ReactStyleInCss(filePath, outputFilePath) {
 
+  var outputFilePath = outputFilePath || 'style.js';
   var source = fs.readFileSync(filePath).toString();
-  return parseCss(source.replace(/\r?\n|\r/g, ""));
+  var style = parseCss(source.replace(/\r?\n|\r/g, "");
 
-  // return new Promise(function(resolve, reject) {
-  //   fs.readFile(filePath, function (err, data) {
-  //     if (err) {
-  //       reject(err)
-  //     } else {
-  //       var source = data.toString();
-  //       var result = parseCss(source.replace(/\r?\n|\r/g, ""));
-  //       resolve(result);
-  //     }
-  //   });
-  // });
-
-
+  var wstream = fs.createWriteStream(outputFilePath);
+  wstream.write("module.exports = require('react-native').StyleSheet.create(" + style + ");");
+  wstream.end();
+  return style
 }

@@ -1,6 +1,6 @@
 {
   "name": "react-native-css",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CSS style your React Components",
   "main": "index.js",
   "scripts": {
