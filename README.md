@@ -35,15 +35,15 @@ React-native-cli doesn't use the node module ecosystem. The basic setup up is to
 ``` css
 description {
   margin-Bottom: 20;
-  fontSize: 18;
-  textAlign: center;
+  font-size: 18;
+  text-align: center;
   color: #656656;
 }
 
 container {
   padding: 30;
   margin-Top: 65;
-  alignItems: center;
+  align-items: center;
 }
 
 ```
