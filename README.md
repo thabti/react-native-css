@@ -27,7 +27,8 @@ ok real example:
 ```
 ## why a cli?
 
-React-native-cli doesn't use the node module ecosystem. So run react-native on one tab and have this running and watching in another.
+React-native-cli doesn't use the node module ecosystem. The basic setup up is to have react-native running on one terminal, and the react-native-css on another. React-native-css will watch for changes and compile back to javascript. 
+
 
 # what?
 
