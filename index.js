@@ -3,9 +3,7 @@
 var parse       = require('css-parse'),
     toCamelCase = require('to-camel-case'),
     fs          = require('fs');
-    Promise     = require('es6-promise').Promise;
 
-var isCSS       = /\.(css|styl|sass|scss)$/;
 
 function parseCss(css) {
   var stylesheet=  parse(css);
