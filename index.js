@@ -1,8 +1,8 @@
 "use strict";
 
 var parse       = require('css-parse'),
-    toCamelCase = require('to-camel-case'),
-    fs          = require('fs');
+toCamelCase = require('to-camel-case'),
+fs          = require('fs');
 
 
 function parseCss(css) {
@@ -11,39 +11,53 @@ function parseCss(css) {
   var json = {};
 
   stylesheet.stylesheet.rules.forEach(function(rule) {
-        if (rule.type !== 'rule') return;
-        rule.selectors.forEach(function(selector) {
-          var styles = (json[selector] = json[selector] || {});
+    if (rule.type !== 'rule') return;
+    rule.selectors.forEach(function(selector) {
+      var styles = (json[selector] = json[selector] || {});
 
-          rule.declarations.forEach(function(declaration) {
-            if (declaration.type !== 'declaration') return;
+      rule.declarations.forEach(function(declaration) {
+        if (declaration.type !== 'declaration') return;
 
-            if(_isNumeric(declaration.value)) {
-              declaration.value = parseInt(declaration.value)
-              styles[toCamelCase(declaration.property)] = declaration.value;
-            } else {
-              styles[toCamelCase(declaration.property)] = declaration.value;
-            }
+        if(_isNumeric(declaration.value)) {
+          declaration.value = parseInt(declaration.value)
+          styles[toCamelCase(declaration.property)] = declaration.value;
+        } else {
+          styles[toCamelCase(declaration.property)] = declaration.value;
+        }
 
-          });
-        });
       });
-      return  JSON.stringify(json)
+    });
+  });
+  return  JSON.stringify(json)
 
 }
 
 function _isNumeric(num){
-    return !isNaN(num)
+  return !isNaN(num)
 }
 
-module.exports = function ReactStyleInCss(filePath, outputFilePath) {
+module.exports = function ReactStyleInCss(input, output) {
 
-  var outputFilePath = outputFilePath || 'style.js';
+  var outputFile = output || 'style.js';
+  var source = "";
 
-  var source = fs.readFileSync(filePath).toString();
+  if(input.indexOf('scss') > -1) {
+
+    var sass = require('node-sass').renderSync({
+      file:  input
+    })
+
+    source = sass.css.toString();
+
+  } else {
+
+    source = fs.readFileSync(input).toString();
+
+  }
+
   var style = parseCss(source.replace(/\r?\n|\r/g, ""));
 
-  var wstream = fs.createWriteStream(outputFilePath);
+  var wstream = fs.createWriteStream(outputFile);
   wstream.write("module.exports = require('react-native').StyleSheet.create(" + style + ");");
   wstream.end();
   return style
