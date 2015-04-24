@@ -1,16 +1,19 @@
 
+# NOTE
+this module is still in development and is not something for everyone.
+
+## 24 April
+
+version `1.1.4` brings sass support, so you can have variables, partials, and more.
+
 
 # react-native-css
 
-write css and use it within your react-native application. Ok basically it turns valid css into JSON, which you can use in your app.
-
-
-# NOTE
-this module is still in development
+Write modular SCSS or basic CSS styles for your React-Native components and application. react-native-css turns valid CSS into the Facebook subset of CSS styling.
 
 
 ```bash
-npm install react-native-css --save
+npm install react-native-css --save 
 ```
 # Come again?
 
@@ -23,14 +26,21 @@ React-native-css comes with a cli and you can watch a file and compile it.
 ok real example:
 
 ``` shell
+./node_module/.bin/react-native-css -i style.scss -o style.js -w
+```
+or
+
+``` shell
 ./node_module/.bin/react-native-css -i style.css -o style.js -w
 ```
 ## why a cli?
 
-React-native-cli doesn't use the node module ecosystem. The basic setup up is to have react-native running on one terminal, and the react-native-css on another. React-native-css will watch for changes and compile back to javascript. 
+React-native-cli doesn't use the node module ecosystem. The basic setup up is to have react-native running on one terminal, and the react-native-css on another. React-native-css will watch for changes and compile back to javascript.
 ![the workflow](http://i.imgur.com/i2OdwiY.png)
 
 # what?
+
+css
 
 ``` css
 description {
@@ -38,6 +48,27 @@ description {
   font-size: 18;
   text-align: center;
   color: #656656;
+}
+
+container {
+  padding: 30;
+  margin-Top: 65;
+  align-items: center;
+}
+
+```
+
+or
+
+Sass
+``` css
+@import 'base/colors';
+
+description {
+  margin-Bottom: 20;
+  font-size: 18;
+  text-align: center;
+  color: $mainTextColor;
 }
 
 container {
@@ -85,3 +116,8 @@ class SearchPage extends Component {
 }
 
 ```
+
+#Todo
+
+* support multiple outputs
+* support for custom output directory (if needed);
