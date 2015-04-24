@@ -18,16 +18,20 @@ if(help) {
 
 if(argv['i'] && argv['o']) {
   console.log('React-native-css - v' + pkg.version);
-  console.log('ctrl + c to exit');
 
 
   var input = path.resolve(process.cwd(), argv['i']);
   var output = path.resolve(process.cwd(), argv['o']);
+
   rnc(input, output);
 
   if(watch) {
+    console.log('ctrl + c to exit');
+
     fs.watch(process.cwd(), function (event, filename) {
-      if (filename === argv['i'] ) {
+      var isSass = filename.indexOf('scss') > -1;
+
+      if (filename === argv['i'] || isSass) {
         console.log(filename, ' compiling');
 
         rnc(input, output);
