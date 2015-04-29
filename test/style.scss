@@ -1,5 +1,9 @@
 @import 'vars';
 
 container {
-  color: $colour;
+	color: $colour;
+}
+
+test {
+	padding: 1, 2, 3;
 }
