@@ -26,12 +26,12 @@ React-native-css comes with a cli and you can watch a file and compile it.
 ok real example:
 
 ``` shell
-./node_module/.bin/react-native-css -i style.scss -o style.js -w
+./node_modules/.bin/react-native-css -i style.scss -o style.js -w
 ```
 or
 
 ``` shell
-./node_module/.bin/react-native-css -i style.css -o style.js -w
+./node_modules/.bin/react-native-css -i style.css -o style.js -w
 ```
 ## why a cli?
 
