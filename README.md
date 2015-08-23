@@ -2,7 +2,16 @@
 # NOTE
 this module is still in development and is not something for everyone.
 
-## 24 April
+## 23 August 2015
+
+```bash
+	npm install react-native-css@1.1.6 --save 
+```
+- Fixes issue #9 (thanks to @ngduc to letting me know)
+- typo fixes, PR #8 and #7 (thanks to @irfaan and @tylermcginnis)
+
+
+## 24 April 2015
 
 version `1.1.4` brings sass support, so you can have variables, partials, and more.
 
