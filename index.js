@@ -23,10 +23,14 @@ module.exports = function ReactStyleInCss(input, output) {
 
 	}
 
-	var style = parseCss(source.replace(/\r?\n|\r/g, ""));
+	var result = source.replace(/\r?\n|\r/g, "");
+
+	var style = parseCss(result);
+
 
 	var wstream = fs.createWriteStream(outputFile);
-	wstream.write("module.exports = require('react-native').StyleSheet.create(" + style + ");");
+
+	wstream.write("module.exports = require('react-native').StyleSheet.create(" + JSON.stringify(style) + ");");
 	wstream.end();
 	return style
 }

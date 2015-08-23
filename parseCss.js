@@ -85,7 +85,7 @@ var parseCss = function (css) {
 			});
 		});
 	});
-	return JSON.stringify(json, null, 4)
+	return json;
 };
 
 
