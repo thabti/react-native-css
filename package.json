@@ -1,39 +1,39 @@
 {
-  "name": "react-native-css",
-  "version": "1.2.0",
-  "description": "CSS style your React Components",
-  "main": "build/index.js",
-  "scripts": {
-    "start": "babel src --out-dir build",
-    "test": "npm start && node ./test/index.test.js"
-  },
-  "author": "Sabeur Thabti",
-  "license": "MIT",
-  "dependencies": {
-    "css-parse": "^2.0.0",
-    "minimist": "^1.1.1",
-    "to-camel-case": "~0.2.0"
-  },
-  "devDependencies": {
-    "babel": "^5.8.23"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sabeurthabti/react-native-css.git"
-  },
-  "keywords": [
-    "react",
-    "react-native",
-    "css",
-    "styling",
-    "components",
-    "ios"
-  ],
-  "bin": {
-    "react-native-css": "./bin/react-native-css"
-  },
-  "bugs": {
-    "url": "https://github.com/sabeurthabti/react-native-css/issues"
-  },
-  "homepage": "https://github.com/sabeurthabti/react-native-css"
+	"name": "react-native-css",
+	"version": "1.2.0",
+	"description": "CSS style your React Components",
+	"main": "build/index.js",
+	"scripts": {
+		"start": "babel src --out-dir build",
+		"test": "npm start && node ./test/index.test.js"
+	},
+	"author": "Sabeur Thabti",
+	"license": "MIT",
+	"dependencies": {
+		"css-parse": "^2.0.0",
+		"minimist": "^1.1.1",
+		"to-camel-case": "~0.2.0"
+	},
+	"devDependencies": {
+		"babel": "^5.8.23"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sabeurthabti/react-native-css.git"
+	},
+	"keywords": [
+		"react",
+		"react-native",
+		"css",
+		"styling",
+		"components",
+		"ios"
+	],
+	"bin": {
+		"react-native-css": "./bin/react-native-css"
+	},
+	"bugs": {
+		"url": "https://github.com/sabeurthabti/react-native-css/issues"
+	},
+	"homepage": "https://github.com/sabeurthabti/react-native-css"
 }
