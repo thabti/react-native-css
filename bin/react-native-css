@@ -17,6 +17,7 @@ if(argv['i'] && argv['o']) {
 	rnc(input, output);
 
 	if(watch) {
+		console.log('Watching for changes on: ', argv['i']);
 		console.log('ctrl + c to exit');
 
 		fs.watch(process.cwd(), function (event, filename) {
