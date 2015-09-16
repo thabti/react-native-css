@@ -1,6 +1,7 @@
 dependencies:
   pre:
     - npm install
+    - npm install -g babel
     - sh login.sh
 
 test:
