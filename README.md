@@ -1,6 +1,6 @@
 # react-native-css
 
-Write your React-Native component styles in CSS. React-native-css turns valid CSS into the Facebook subset of CSS styling.
+Write your React-Native component styles in CSS. React-native-css turns valid CSS into the Facebook subset of CSS.
 
 ## intall
 
