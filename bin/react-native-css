@@ -14,7 +14,7 @@ if(argv['i'] && argv['o']) {
 	var input = path.resolve(process.cwd(), argv['i']);
 	var output = path.resolve(process.cwd(), argv['o']);
 
-	rnc(input, output);
+	rnc.parse(input, output);
 
 	if(watch) {
 		console.log('Watching for changes on: ', argv['i']);
