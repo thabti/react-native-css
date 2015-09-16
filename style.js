@@ -1,1 +1,0 @@
-module.exports = require('react-native').StyleSheet.create({"container":{"color":"#fff"},"test":{"paddingLeft":2,"paddingRight":2,"paddingTop":1,"paddingBottom":3},"number":{"width":400}});

@@ -1,46 +1,52 @@
-
-# NOTE
-this module is still in development and is not something for everyone.
-
-## 24 April
-
-version `1.1.4` brings sass support, so you can have variables, partials, and more.
-
-
 # react-native-css
 
-Write modular SCSS or basic CSS styles for your React-Native components and application. react-native-css turns valid CSS into the Facebook subset of CSS styling.
+Write your React-Native component styles in CSS. React-native-css turns valid CSS into the Facebook subset of CSS styling.
 
+## intall
+
+Global
 
 ```bash
-npm install react-native-css --save 
+npm install react-native-css -g 
 ```
-# Come again?
+
+or locally
+
+```bash
+npm install react-native-css --save
+```
+# Command Line Interface
 
 React-native-css comes with a cli and you can watch a file and compile it.
 
 ``` shell
-./node_modules/.bin/react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -w `
+# example 1
+react-native-css INPUT_CSS_FILE OUTPUT_JS_FILE -watch ` 
 ```
-
-ok real example:
 
 ``` shell
-./node_modules/.bin/react-native-css -i style.scss -o style.js -w
+# example 2
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
 ```
-or
 
 ``` shell
-./node_modules/.bin/react-native-css -i style.css -o style.js -w
+react-native-css style.css style.js -w
 ```
+
+Commands
+- "-w" or -"watch" - watch for changes.
+- "-i" takes a input (optional)
+- "-o" takes an output path (optional)
+
 ## why a cli?
 
-React-native-cli doesn't use the node module ecosystem. The basic setup up is to have react-native running on one terminal, and the react-native-css on another. React-native-css will watch for changes and compile back to javascript.
+React-native-cli doesn't use the node module ecosystem. The basic setup up is to have React-native running on one terminal, and the react-native-css on another. 
+React-native-css will watch for changes and compile back to javascript.
 ![the workflow](http://i.imgur.com/i2OdwiY.png)
 
-# what?
+# Example
 
-css
+Given the following CSS:
 
 ``` css
 description {
@@ -58,35 +64,7 @@ container {
 
 ```
 
-or
-
-Sass
-``` css
-@import 'base/colors';
-
-description {
-  margin-Bottom: 20;
-  font-size: 18;
-  text-align: center;
-  color: $mainTextColor;
-}
-
-container {
-  padding: 30;
-  margin-Top: 65;
-  align-items: center;
-}
-
-```
-
-to
-
-``` json
-{"description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}}
-
-```
-
-then a module file is generated
+React-native-css will generate to the following:
 
 ``` javascript
 // style.js
@@ -95,7 +73,7 @@ module.exports = require('react-native').StyleSheet.create(
   );
 ```
 
-# then?
+# Usage
 ```js
 // require the generated style file
 var styles = require('./style.js')
@@ -117,7 +95,14 @@ class SearchPage extends Component {
 
 ```
 
-#Todo
+# News
 
+16/11/15 - minor rewrite, and I removed support for `sass` due to `node 4.0.0` issues. 
+
+
+# Todo
+
+* support Sass again
 * support multiple outputs
 * support for custom output directory (if needed);
+
