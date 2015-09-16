@@ -2,12 +2,12 @@
 
 Write your React-Native component styles in CSS/SCSS. React-native-css turns valid CSS into the Facebook subset of CSS. SCSS gives you modularity, variables, mixins and more. 
 
-# Stable
+### Stable
 Most bug in the rewrite have been fixed, anything after `react-native-css@1.2.12`
 
 
 
-## install
+## Install
 
 Global
 
@@ -43,7 +43,7 @@ Flags
 - "-i" takes a input (optional)
 - "-o" takes an output path (optional)
 
-## why a cli?
+## CLI
 
 React-native-cli doesn't use the node module ecosystem. The basic setup up is to have React-native running on one terminal, and the react-native-css on another. 
 React-native-css will watch for changes and compile back to javascript.
