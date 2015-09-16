@@ -14,7 +14,7 @@ deployment:
     commands:
       - echo "doing a patch update!"
       - git config --global push.default matching
-      - git config --global user.email "sabeur.thabti@gmail.com"
+      - git config --global user.email "thabti.sabeur@gmail.com"
       - git config --global user.name "Sabeur Thabti"
       - npm version patch
       - git commit --amend -m 'automated patching [ci skip]'
