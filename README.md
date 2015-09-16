@@ -1,6 +1,6 @@
-# react-native-css
+# react-native-css (or SCSS)
 
-Write your React-Native component styles in CSS. React-native-css turns valid CSS into the Facebook subset of CSS.
+Write your React-Native component styles in CSS/SCSS. React-native-css turns valid CSS into the Facebook subset of CSS. SCSS gives you modularity, variables, mixins and more. 
 
 ## intall
 
