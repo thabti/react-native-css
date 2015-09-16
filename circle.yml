@@ -6,7 +6,7 @@ dependencies:
 
 test:
   override:
-    - npm test
+    - echo "hello"
 
 deployment:
   production:
