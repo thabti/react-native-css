@@ -46,6 +46,8 @@ exports['default'] = {
 
 	handleRulesAndReturnCSSJSON: function handleRulesAndReturnCSSJSON(stylesheetString) {
 
+		console.log(stylesheetString, '--');
+
 		var changeArr = ['margin', 'padding'];
 
 		var _ParseCSS = (0, _cssParse2['default'])(helpers.clean(stylesheetString));
@@ -148,7 +150,9 @@ exports['default'] = {
 										});
 									}
 								} else {
-									if (Number.isNaN(declaration.value)) {
+									console.log(declaration.value, !isNaN(declaration.value));
+
+									if (!isNaN(declaration.value)) {
 										declaration.value = parseInt(declaration.value);
 										styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
 									} else {

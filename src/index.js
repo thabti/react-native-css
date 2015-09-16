@@ -101,7 +101,8 @@ export default {
 						}
 					}
 					else {
-						if (Number.isNaN(declaration.value)) {
+
+						if (!isNaN(declaration.value)) {
 							declaration.value = parseInt(declaration.value);
 							styles[toCamelCase(property)] = declaration.value;
 						} else {
