@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var rnc = require('../buidl/index.js');
+var rnc = require('../build/index.js');
 var pkg = require('../package.json');
 var path = require('path');
 var fs = require('fs');
