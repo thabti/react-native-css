@@ -1,13 +1,15 @@
-@import 'vars';
+$colour-base: #656656;
+
+description {
+	margin: 2, 3, 4;
+	font-size: 18;
+	text-align: center;
+	color: $colour-base;
+}
 
 container {
-	color: $colour;
-}
 
-test {
-	padding: 1, 2, 3;
-}
-
-number {
-	width: 400;
+	padding: 30;
+	margin-top: 65;
+	align-items: center;
 }

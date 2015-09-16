@@ -1,20 +1,22 @@
 {
   "name": "react-native-css",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "CSS style your React Components",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "start": "babel src --out-dir build",
+    "test": "npm start && node ./test/index.test.js"
   },
   "author": "Sabeur Thabti",
   "license": "MIT",
   "dependencies": {
     "css-parse": "^2.0.0",
     "minimist": "^1.1.1",
-    "node-sass": "^2.1.1",
     "to-camel-case": "~0.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel": "^5.8.23"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/sabeurthabti/react-native-css.git"
