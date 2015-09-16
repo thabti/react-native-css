@@ -1,6 +1,6 @@
-# react-native-css
+# react-native-css (and SCSS)
 
-Write your React-Native component styles in CSS. React-native-css turns valid CSS into the Facebook subset of CSS.
+Write your React-Native component styles in CSS/SCSS. React-native-css turns valid CSS into the Facebook subset of CSS. SCSS gives you modularity, variables, mixins and more. 
 
 ## intall
 
@@ -21,12 +21,12 @@ React-native-css comes with a cli and you can watch a file and compile it.
 
 ``` shell
 # example 1
-react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch
 ```
 
 ``` shell
 # example 2
-react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch 
 ```
 
 ``` shell
@@ -34,7 +34,7 @@ react-native-css -i style.css -o style.js -w
 ```
 
 Flags
-- "-w" or -"watch" - watch for changes.
+- "-w" or -"watch" - watch for changes and recompile. 
 - "-i" takes a input (optional)
 - "-o" takes an output path (optional)
 
