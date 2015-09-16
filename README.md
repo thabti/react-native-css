@@ -21,12 +21,12 @@ React-native-css comes with a cli and you can watch a file and compile it.
 
 ``` shell
 # example 1
-react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch
 ```
 
 ``` shell
 # example 2
-react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch 
 ```
 
 ``` shell
@@ -34,7 +34,7 @@ react-native-css -i style.css -o style.js -w
 ```
 
 Flags
-- "-w" or -"watch" - watch for changes.
+- "-w" or -"watch" - watch for changes and recompile. 
 - "-i" takes a input (optional)
 - "-o" takes an output path (optional)
 
