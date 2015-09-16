@@ -21,7 +21,7 @@ React-native-css comes with a cli and you can watch a file and compile it.
 
 ``` shell
 # example 1
-react-native-css INPUT_CSS_FILE OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
 ```
 
 ``` shell
@@ -30,7 +30,7 @@ react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch `
 ```
 
 ``` shell
-react-native-css style.css style.js -w
+react-native-css -i style.css -o style.js -w
 ```
 
 Flags
@@ -97,12 +97,12 @@ class SearchPage extends Component {
 
 # News
 
+17/11/15 - sass support and bug fixes
 16/11/15 - minor rewrite, and I removed support for `sass` due to `node 4.0.0` issues. 
 
 
 # Todo
 
-* support Sass again
 * support multiple outputs
 * support for custom output directory (if needed);
 
