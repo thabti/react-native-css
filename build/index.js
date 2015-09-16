@@ -48,8 +48,6 @@ exports['default'] = {
 
 		var changeArr = ['margin', 'padding'];
 
-		console.log(stylesheetString);
-
 		var _ParseCSS = (0, _cssParse2['default'])(helpers.clean(stylesheetString));
 
 		var stylesheet = _ParseCSS.stylesheet;

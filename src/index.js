@@ -31,7 +31,6 @@ export default {
 
 		const changeArr = ['margin', 'padding'];
 
-		console.log(stylesheetString)
 		let {stylesheet} = ParseCSS(helpers.clean(stylesheetString));
 
 		let JSONResult = {};
