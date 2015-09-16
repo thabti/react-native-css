@@ -33,7 +33,7 @@ react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch `
 react-native-css style.css style.js -w
 ```
 
-Commands
+Flags
 - "-w" or -"watch" - watch for changes.
 - "-i" takes a input (optional)
 - "-o" takes an output path (optional)
