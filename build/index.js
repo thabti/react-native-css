@@ -25,19 +25,16 @@ exports['default'] = {
 
 		var output = arguments.length <= 1 || arguments[1] === undefined ? './style.js' : arguments[1];
 
-		if (input.includes('scss')) {
+		if (input.indexOf('.scss') > 1) {
+			var _require$renderSync = require('node-sass').renderSync({
+				file: input,
+				outputStyle: 'compressed'
+			});
 
-			// todo: add Sass  supprt
+			var css = _require$renderSync.css;
 
-			//let {css} = require('node-sass').renderSync({
-			//	file: input,
-			//	outputStyle: 'compressed'
-			//});
-			//
-			//let styleSheet = this.handleRulesAndReturnCSSJSON(css);
-			//return helpers.outputReactFriendlyStyle(styleSheet, output)
-
-			console.error("Error: Sass support has been disabled, submit an issue.");
+			var styleSheet = this.handleRulesAndReturnCSSJSON(css.toString());
+			return helpers.outputReactFriendlyStyle(styleSheet, output);
 		} else {
 
 			helpers.readFile(input, function (err, data) {
@@ -50,6 +47,8 @@ exports['default'] = {
 	handleRulesAndReturnCSSJSON: function handleRulesAndReturnCSSJSON(stylesheetString) {
 
 		var changeArr = ['margin', 'padding'];
+
+		console.log(stylesheetString);
 
 		var _ParseCSS = (0, _cssParse2['default'])(helpers.clean(stylesheetString));
 
