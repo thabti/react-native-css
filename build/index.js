@@ -46,8 +46,6 @@ exports['default'] = {
 
 	handleRulesAndReturnCSSJSON: function handleRulesAndReturnCSSJSON(stylesheetString) {
 
-		console.log(stylesheetString, '--');
-
 		var changeArr = ['margin', 'padding'];
 
 		var _ParseCSS = (0, _cssParse2['default'])(helpers.clean(stylesheetString));
@@ -150,7 +148,6 @@ exports['default'] = {
 										});
 									}
 								} else {
-									console.log(declaration.value, !isNaN(declaration.value));
 
 									if (!isNaN(declaration.value)) {
 										declaration.value = parseInt(declaration.value);
