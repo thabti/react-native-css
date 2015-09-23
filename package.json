@@ -12,11 +12,12 @@
   "dependencies": {
     "css-parse": "^2.0.0",
     "minimist": "^1.1.1",
-    "to-camel-case": "~0.2.0"
+    "to-camel-case": "~0.2.0",
+    "node-sass": "^3.3.2"
   },
   "devDependencies": {
-    "babel": "^5.8.23",
-    "node-sass": "^3.3.2"
+    "babel": "^5.8.23"
+
   },
   "peerDependencies": {
     "react-native": ">=0.5"
