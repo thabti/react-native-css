@@ -24,6 +24,7 @@ exports['default'] = {
 		var _this = this;
 
 		var output = arguments.length <= 1 || arguments[1] === undefined ? './style.js' : arguments[1];
+		var prettyPrint = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
 
 		if (input.indexOf('.scss') > 1) {
 			var _require$renderSync = require('node-sass').renderSync({
@@ -34,12 +35,12 @@ exports['default'] = {
 			var css = _require$renderSync.css;
 
 			var styleSheet = this.handleRulesAndReturnCSSJSON(css.toString());
-			return helpers.outputReactFriendlyStyle(styleSheet, output);
+			return helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint);
 		} else {
 
 			helpers.readFile(input, function (err, data) {
 				var styleSheet = _this.handleRulesAndReturnCSSJSON(data);
-				helpers.outputReactFriendlyStyle(styleSheet, output);
+				helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint);
 			});
 		}
 	},
@@ -266,10 +267,10 @@ var helpers = {
 		_fs2['default'].readFile(file, "utf8", cb);
 	},
 
-	outputReactFriendlyStyle: function outputReactFriendlyStyle(style, outputFile) {
-
+	outputReactFriendlyStyle: function outputReactFriendlyStyle(style, outputFile, prettyPrint) {
+		var indentation = prettyPrint ? 4 : 0;
 		var wstream = _fs2['default'].createWriteStream(outputFile);
-		wstream.write('module.exports = require(\'react-native\').StyleSheet.create(' + JSON.stringify(style) + ');');
+		wstream.write('module.exports = require(\'react-native\').StyleSheet.create(' + JSON.stringify(style, null, indentation) + ');');
 		wstream.end();
 		return style;
 	}
