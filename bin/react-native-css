@@ -6,7 +6,8 @@ var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 
 var help = argv['h'] || argv['help'];
-var watch = argv['w'];
+var watch = argv['w'] || argv['watch'];
+var prettyPrint = argv['p'] || argv['pretty'] ? true : false;
 
 if(argv['i'] && argv['o']) {
 	console.log('React-native-css - v' + pkg.version);
@@ -14,7 +15,7 @@ if(argv['i'] && argv['o']) {
 	var input = path.resolve(process.cwd(), argv['i']);
 	var output = path.resolve(process.cwd(), argv['o']);
 
-	rnc.parse(input, output);
+	rnc.parse(input, output, prettyPrint);
 
 	if(watch) {
 		console.log('Watching for changes on: ', argv['i']);
@@ -26,7 +27,7 @@ if(argv['i'] && argv['o']) {
 			if (filename === argv['i'] || isSass) {
 				console.log(filename, ' compiling');
 
-				rnc.parse(input, output);
+				rnc.parse(input, output, prettyPrint);
 			}
 		});
 

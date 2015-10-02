@@ -4,7 +4,7 @@ import fs from 'fs';
 
 export default {
 
-	parse (input, output = './style.js') {
+	parse (input, output = './style.js', prettyPrint = false) {
 
 
 		if (input.indexOf('.scss') > 1) {
@@ -15,13 +15,13 @@ export default {
 			});
 
 			let styleSheet = this.handleRulesAndReturnCSSJSON(css.toString());
-			return helpers.outputReactFriendlyStyle(styleSheet, output)
+			return helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint)
 
 		} else {
 
 			helpers.readFile(input, (err, data) => {
 				let styleSheet = this.handleRulesAndReturnCSSJSON(data);
-				helpers.outputReactFriendlyStyle(styleSheet, output)
+				helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint)
 			});
 		}
 
@@ -140,10 +140,10 @@ let helpers = {
 		fs.readFile(file, "utf8", cb);
 	},
 
-	outputReactFriendlyStyle(style, outputFile) {
-
+	outputReactFriendlyStyle(style, outputFile, prettyPrint) {
+		var indentation = prettyPrint ? 4 : 0;
 		var wstream = fs.createWriteStream(outputFile);
-		wstream.write(`module.exports = require('react-native').StyleSheet.create(${JSON.stringify(style)});`);
+		wstream.write(`module.exports = require('react-native').StyleSheet.create(${JSON.stringify(style, null, indentation)});`);
 		wstream.end();
 		return style;
 	}
