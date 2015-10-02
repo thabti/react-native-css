@@ -2,11 +2,6 @@
 
 Write your React-Native component styles in CSS/SCSS. React-native-css turns valid CSS into the Facebook subset of CSS. SCSS gives you modularity, variables, mixins and more. 
 
-### Stable
-Most bug in the rewrite have been fixed, anything after `react-native-css@1.2.12`
-
-
-
 ## Install
 
 Global
@@ -100,14 +95,6 @@ class SearchPage extends Component {
 }
 
 ```
-
-# News
-
-17/11/15 - sass support and bug fixes
-16/11/15 - minor rewrite, and I removed support for `sass` due to `node 4.0.0` issues. 
-
-
-# Todo
 
 * support multiple outputs
 * support for custom output directory (if needed);
