@@ -1,4 +1,8 @@
-# react-native-css (and SCSS) [![Circle CI](https://circleci.com/gh/sabeurthabti/react-native-css.svg?style=svg&circle-token=a140907997e6a37c6c5ec75f04e8150cef049ff6)](https://circleci.com/gh/sabeurthabti/react-native-css)
+# react-native-css (and SCSS) [![Circle CI](https://circleci.com/gh/sabeurthabti/react-native-css.svg?style=svg&circle-token=a140907997e6a37c6c5ec75f04e8150cef049ff6)](https://circleci.com/gh/sabeurthabti/react-native-css) [![NPM](https://img.shields.io/npm/dm/react-native-css.svg?style=flat-square)](https://www.npmjs.com/package/react-native-css)
+
+
+
+https://img.shields.io/npm/dm/react-native-css.svg?style=flat-square
 
 Write your React-Native component styles in CSS/SCSS. React-native-css turns valid CSS into the Facebook subset of CSS. SCSS gives you modularity, variables, mixins and more. 
 
