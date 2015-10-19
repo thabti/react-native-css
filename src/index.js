@@ -20,10 +20,10 @@ export default {
 		} else {
 
 			helpers.readFile(input, (err, data) => {
-        if (err) {
-          console.error(err);
-          process.exit();
-        }
+				if (err) {
+					console.error(err);
+					process.exit();
+				}
 				let styleSheet = this.handleRulesAndReturnCSSJSON(data);
 				helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint)
 			});
