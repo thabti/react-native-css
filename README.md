@@ -55,7 +55,7 @@ Given the following CSS:
 
 ``` css
 description {
-  margin-Bottom: 20;
+  margin-bottom: 20;
   font-size: 18;
   text-align: center;
   color: #656656;
@@ -63,7 +63,7 @@ description {
 
 container {
   padding: 30;
-  margin-Top: 65;
+  margin-top: 65;
   align-items: center;
 }
 
