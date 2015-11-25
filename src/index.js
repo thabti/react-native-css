@@ -40,7 +40,7 @@ export default {
 		let JSONResult = {};
 
 		for (let rule of stylesheet.rules) {
-			if (rule.type !== 'rule') return;
+			if (rule.type !== 'rule') continue;
 
 			for (let selector of rule.selectors) {
 				selector = selector.replace(/\.|#/g, '');
@@ -50,7 +50,7 @@ export default {
 
 
 				for (let declaration of rule.declarations) {
-					if (declaration.type !== 'declaration') return;
+					if (declaration.type !== 'declaration') continue;
 
 					let value = declaration.value;
 					let property = declaration.property;
