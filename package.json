@@ -1,7 +1,7 @@
 {
   "name": "react-native-css",
   "version": "1.2.20",
-  "description": "CSS style your React Components",
+  "description": "Style React-Native components with css and built in support for SASS",
   "main": "build/index.js",
   "scripts": {
     "start": "babel src --out-dir build",
