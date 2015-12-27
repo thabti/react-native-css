@@ -39,6 +39,10 @@ exports['default'] = {
 		} else {
 
 			helpers.readFile(input, function (err, data) {
+				if (err) {
+					console.error(err);
+					process.exit();
+				}
 				var styleSheet = _this.handleRulesAndReturnCSSJSON(data);
 				helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint);
 			});
@@ -63,7 +67,7 @@ exports['default'] = {
 			for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 				var rule = _step.value;
 
-				if (rule.type !== 'rule') return;
+				if (rule.type !== 'rule') continue;
 
 				var _iteratorNormalCompletion2 = true;
 				var _didIteratorError2 = false;
@@ -86,11 +90,7 @@ exports['default'] = {
 							var _loop2 = function () {
 								var declaration = _step3.value;
 
-								if (declaration.type !== 'declaration') return {
-										v: {
-											v: undefined
-										}
-									};
+								if (declaration.type !== 'declaration') return 'continue';
 
 								var value = declaration.value;
 								var property = declaration.property;
@@ -162,7 +162,7 @@ exports['default'] = {
 							for (_iterator3 = rule.declarations[Symbol.iterator](); !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
 								var _ret2 = _loop2();
 
-								if (typeof _ret2 === 'object') return _ret2.v;
+								if (_ret2 === 'continue') continue;
 							}
 						} catch (err) {
 							_didIteratorError3 = true;
@@ -209,9 +209,7 @@ exports['default'] = {
 
 						var _i4;
 
-						var _ret = _loop();
-
-						if (typeof _ret === 'object') return _ret.v;
+						_loop();
 					}
 				} catch (err) {
 					_didIteratorError2 = true;

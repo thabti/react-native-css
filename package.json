@@ -10,10 +10,11 @@
   "author": "Sabeur Thabti",
   "license": "MIT",
   "dependencies": {
+    "chokidar": "^1.4.1",
     "css-parse": "^2.0.0",
     "minimist": "^1.1.1",
-    "to-camel-case": "~0.2.0",
-    "node-sass": "^3.3.2"
+    "node-sass": "^3.3.2",
+    "to-camel-case": "~0.2.0"
   },
   "devDependencies": {
     "babel": "^5.8.23"

@@ -4,39 +4,42 @@ var pkg = require('../package.json');
 var path = require('path');
 var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
-
+var chokidar = require('chokidar');
 var help = argv['h'] || argv['help'];
 var watch = argv['w'] || argv['watch'];
 var prettyPrint = argv['p'] || argv['pretty'] ? true : false;
+var inputOutput = (argv['i'] && argv['o']) || argv._[0] && argv._[1];
 
-if(argv['i'] && argv['o']) {
+if(inputOutput) {
 	console.log('React-native-css - v' + pkg.version);
+	var inputArgs = argv['i'] || argv._[0];
+	var outputArgs = argv['o'] || argv._[1];
 
-	var input = path.resolve(process.cwd(), argv['i']);
-	var output = path.resolve(process.cwd(), argv['o']);
+	var input = path.resolve(process.cwd(), inputArgs);
+	var output = path.resolve(process.cwd(), outputArgs);
 
 	rnc.parse(input, output, prettyPrint);
 
 	if(watch) {
-		console.log('Watching for changes on: ', argv['i']);
+		console.log('Watching for changes on: ', inputArgs);
 		console.log('ctrl + c to exit');
 
-		fs.watch(process.cwd(), function (event, filename) {
-			var isSass = filename.indexOf('scss') > -1;
-
-			if (filename === argv['i'] || isSass) {
-				console.log(filename, ' compiling');
-
-				rnc.parse(input, output, prettyPrint);
-			}
+		var watcher = chokidar.watch(input, {
+			ignored: /[\/\\]\./, persistent: true
+		}).on('change', function(path) {
+			console.log('File', inputArgs, 'has been changed');
+			rnc.parse(input, output, prettyPrint);
 		});
-
 	}
+}else if(help ) {
+	message();
+} else {
+	message();
 }
 
-if(help) {
+function message() {
 	console.log('React-native-css - v' + pkg.version);
-	console.log('\nCompile and watch: \n ./node_modules/.bin/react-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE -w  \nCompile once: \n./node_modules/.bin/react-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE\n ')
-	console.log('real example: ./node_modules/.bin/react-native-css -i ../css/main.css -o ../styles/main.js -w ');
+	console.log('\nCompile and watch: \n react-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE -w  \nCompile once: \nreact-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE\n ')
+	console.log('real example: react-native-css -i ../css/main.css -o ../styles/main.js -w ');
 
 }

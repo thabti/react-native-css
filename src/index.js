@@ -6,7 +6,6 @@ export default {
 
 	parse (input, output = './style.js', prettyPrint = false) {
 
-
 		if (input.indexOf('.scss') > 1) {
 
 			let {css} = require('node-sass').renderSync({
