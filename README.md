@@ -25,6 +25,11 @@ react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE --watch --pretty
 ```
 
 ``` shell
+# example 3
+react-native-css INPUT_CSS_FILE OUTPUT_JS_FILE -w
+```
+
+``` shell
 react-native-css -i style.css -o style.js -w
 ```
 
