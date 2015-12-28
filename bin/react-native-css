@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-var rnc = require('../build/index.js');
+var RNC = require('../build/index.js');
+var css = new RNC();
 var pkg = require('../package.json');
 var path = require('path');
 var fs = require('fs');
@@ -18,17 +19,17 @@ if(inputOutput) {
 	var input = path.resolve(process.cwd(), inputArgs);
 	var output = path.resolve(process.cwd(), outputArgs);
 
-	rnc.parse(input, output, prettyPrint);
+	css.parse(input, output, prettyPrint);
 
 	if(watch) {
-		console.log('Watching for changes on: ', inputArgs);
+		console.log('Watching for changes on:', inputArgs);
 		console.log('ctrl + c to exit');
 
 		var watcher = chokidar.watch(input, {
 			ignored: /[\/\\]\./, persistent: true
 		}).on('change', function(path) {
 			console.log('File', inputArgs, 'has been changed');
-			rnc.parse(input, output, prettyPrint);
+			css.parse(input, output, prettyPrint);
 		});
 	}
 }else if(help ) {

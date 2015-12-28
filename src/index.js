@@ -1,153 +1,121 @@
 import ParseCSS from 'css-parse';
 import toCamelCase from 'to-camel-case';
-import fs from 'fs';
+import utils from './utils.js'
+export default class ReactNativeCss {
 
-export default {
+  constructor() {
 
-	parse (input, output = './style.js', prettyPrint = false) {
+  }
 
-		if (input.indexOf('.scss') > 1) {
+  parse(input, output = './style.js', prettyPrint = false) {
+    if(utils.contains(input, /scss/)) {
 
-			let {css} = require('node-sass').renderSync({
-				file: input,
-				outputStyle: 'compressed'
-			});
+      let {css} = require('node-sass').renderSync({
+        file: input,
+        outputStyle: 'compressed'
+      });
 
-			let styleSheet = this.handleRulesAndReturnCSSJSON(css.toString());
-			return helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint)
+      let styleSheet = this.toJSS(css.toString());
+      return utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint);
 
-		} else {
+    } else {
+      utils.readFile(input, (err, data) => {
+        if (err) {
+          console.error(err);
+          process.exit();
+        }
+        let styleSheet = this.toJSS(data);
+        utils.outputReactFriendlyStyle(styleSheet, output, this.prettyPrint)
+      });
+    }
 
-			helpers.readFile(input, (err, data) => {
-				if (err) {
-					console.error(err);
-					process.exit();
-				}
-				let styleSheet = this.handleRulesAndReturnCSSJSON(data);
-				helpers.outputReactFriendlyStyle(styleSheet, output, prettyPrint)
-			});
-		}
+  }
 
-	},
+  toJSS(stylesheetString) {
+    const changeArr = ['margin', 'padding'];
 
-	handleRulesAndReturnCSSJSON(stylesheetString) {
+    let {stylesheet} = ParseCSS(utils.clean(stylesheetString));
 
-		const changeArr = ['margin', 'padding'];
+    let JSONResult = {};
 
-		let {stylesheet} = ParseCSS(helpers.clean(stylesheetString));
+    for (let rule of stylesheet.rules) {
+      if (rule.type !== 'rule') continue;
 
-		let JSONResult = {};
+      for (let selector of rule.selectors) {
+        selector = selector.replace(/\.|#/g, '');
+        let styles = (JSONResult[selector] = JSONResult[selector] || {});
 
-		for (let rule of stylesheet.rules) {
-			if (rule.type !== 'rule') continue;
+        let declarationsToAdd = [];
 
-			for (let selector of rule.selectors) {
-				selector = selector.replace(/\.|#/g, '');
-				let styles = (JSONResult[selector] = JSONResult[selector] || {});
+        for (let declaration of rule.declarations) {
 
-				let declarationsToAdd = [];
+          if (declaration.type !== 'declaration') continue;
 
-
-				for (let declaration of rule.declarations) {
-					if (declaration.type !== 'declaration') continue;
-
-					let value = declaration.value;
-					let property = declaration.property;
+          let value = declaration.value;
+          let property = declaration.property;
 
 
-					if (helpers.indexOf(property, changeArr)) {
-						var baseDeclaration = {
-							type: 'description'
-						};
+          if (utils.arrayContains(property, changeArr)) {
+            var baseDeclaration = {
+              type: 'description'
+            };
 
-						var values = value.replace(/px|\s*/g, '').split(',');
+            var values = value.replace(/px|\s*/g, '').split(',');
 
-						values.forEach(function (value, index, arr) {
-							arr[index] = parseInt(value);
-						});
+            values.forEach(function (value, index, arr) {
+              arr[index] = parseInt(value);
+            });
 
-						var length = values.length;
+            var length = values.length;
 
-						if (length === 1) {
+            if (length === 1) {
 
-							for (let prop of ['Top', 'Bottom', 'Right', 'Left']) {
-								styles[property + prop] = values[0];
-							}
+              for (let prop of ['Top', 'Bottom', 'Right', 'Left']) {
+                styles[property + prop] = values[0];
+              }
 
-						}
+            }
 
-						if (length === 2) {
+            if (length === 2) {
 
-							for (let prop of ['Top', 'Bottom']) {
-								styles[property + prop] = values[0];
-							}
+              for (let prop of ['Top', 'Bottom']) {
+                styles[property + prop] = values[0];
+              }
 
-							for (let prop of ['Top', 'Bottom']) {
-								styles[property + prop] = values[1];
-							}
-						}
+              for (let prop of ['Top', 'Bottom']) {
+                styles[property + prop] = values[1];
+              }
+            }
 
-						if (length === 3) {
+            if (length === 3) {
 
-							for (let prop of ['Left', 'Right']) {
-								styles[property + prop] = values[1];
-							}
+              for (let prop of ['Left', 'Right']) {
+                styles[property + prop] = values[1];
+              }
 
-							styles[`${property}Top`] = values[0];
-							styles[`${property}Bottom`] = values[2];
-						}
+              styles[`${property}Top`] = values[0];
+              styles[`${property}Bottom`] = values[2];
+            }
 
-						if (length === 4) {
-							['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-								styles[property + prop] = values[index];
-							});
-						}
-					}
-					else {
+            if (length === 4) {
+              ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
+                styles[property + prop] = values[index];
+              });
+            }
+          }
+          else {
 
-						if (!isNaN(declaration.value)) {
-							declaration.value = parseInt(declaration.value);
-							styles[toCamelCase(property)] = declaration.value;
-						} else {
-							styles[toCamelCase(property)] = declaration.value;
-						}
-					}
+            if (!isNaN(declaration.value)) {
+              declaration.value = parseInt(declaration.value);
+              styles[toCamelCase(property)] = declaration.value;
+            } else {
+              styles[toCamelCase(property)] = declaration.value;
+            }
+          }
+        }
+      }
+      return JSONResult
+    }
 
-				}
-			}
-		}
-
-		return JSONResult;
-
-	}
+  }
 }
-
-
-let helpers = {
-
-	indexOf(value, arr) {
-		var flag = false;
-		for (var i = 0; i < arr.length; i++) {
-			if (value === arr[i]) {
-				return true
-			}
-		}
-		return flag;
-	},
-
-	clean(string) {
-		return string.replace(/\r?\n|\r/g, "");
-	},
-
-	readFile(file, cb) {
-		fs.readFile(file, "utf8", cb);
-	},
-
-	outputReactFriendlyStyle(style, outputFile, prettyPrint) {
-		var indentation = prettyPrint ? 4 : 0;
-		var wstream = fs.createWriteStream(outputFile);
-		wstream.write(`module.exports = require('react-native').StyleSheet.create(${JSON.stringify(style, null, indentation)});`);
-		wstream.end();
-		return style;
-	}
-};
