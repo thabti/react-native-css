@@ -11,9 +11,12 @@
   "license": "MIT",
   "dependencies": {
     "chokidar": "^1.4.1",
+    "colors": "^1.1.2",
     "css-parse": "^2.0.0",
     "minimist": "^1.1.1",
     "node-sass": "^3.3.2",
+    "npm-web-api": "^0.1.1",
+    "request": "^2.67.0",
     "to-camel-case": "~0.2.0"
   },
   "devDependencies": {

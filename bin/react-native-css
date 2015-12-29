@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 var RNC = require('../build/index.js');
 var css = new RNC();
-var pkg = require('../package.json');
+var pkgVersion = require('../package.json').version;
 var path = require('path');
+var colors = require('colors');
 var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 var chokidar = require('chokidar');
@@ -12,7 +13,6 @@ var prettyPrint = argv['p'] || argv['pretty'] ? true : false;
 var inputOutput = (argv['i'] && argv['o']) || argv._[0] && argv._[1];
 
 if(inputOutput) {
-	console.log('React-native-css - v' + pkg.version);
 	var inputArgs = argv['i'] || argv._[0];
 	var outputArgs = argv['o'] || argv._[1];
 
@@ -22,13 +22,13 @@ if(inputOutput) {
 	css.parse(input, output, prettyPrint);
 
 	if(watch) {
-		console.log('Watching for changes on:', inputArgs);
-		console.log('ctrl + c to exit');
+		console.log('Watching for changes on:'.green, inputArgs);
+		console.log('ctrl + c to exit'.red.underline);
 
 		var watcher = chokidar.watch(input, {
 			ignored: /[\/\\]\./, persistent: true
 		}).on('change', function(path) {
-			console.log('File', inputArgs, 'has been changed');
+			console.log('File', inputArgs, 'has been changed'.green);
 			css.parse(input, output, prettyPrint);
 		});
 	}
@@ -39,8 +39,14 @@ if(inputOutput) {
 }
 
 function message() {
-	console.log('React-native-css - v' + pkg.version);
-	console.log('\nCompile and watch: \n react-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE -w  \nCompile once: \nreact-native-css -i INPUT_CSS_FILE_AND_FULLPATH -o OUTPUT_JS_FILE\n ')
-	console.log('real example: react-native-css -i ../css/main.css -o ../styles/main.js -w ');
-
+	console.log('version ' + pkgVersion);
+	console.log('example: react-native-css -i ../css/main.css -o ../styles/main.js -w '.blue);
+	console.log('example: react-native-css ../css/main.scss ../styles/main.js '.green);
 }
+
+require('request')('https://raw.githubusercontent.com/sabeurthabti/react-native-css/master/package.json', function (error, response, body) {
+  if (!error && response.statusCode == 200) {
+		var version = JSON.parse(body).version;
+		if(version !== pkgVersion) console.log(`Running out-dated version ${pkgVersion}, please run 'npm update react-native-css'`.red)
+  }
+})
