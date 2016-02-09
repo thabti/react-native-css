@@ -54,7 +54,6 @@ export default class ReactNativeCss {
           let value = declaration.value;
           let property = declaration.property;
 
-
           if (utils.arrayContains(property, changeArr)) {
             var baseDeclaration = {
               type: 'description'
@@ -104,18 +103,15 @@ export default class ReactNativeCss {
             }
           }
           else {
-
-            if (!isNaN(declaration.value)) {
+            if (!isNaN(declaration.value) && property !== 'font-weight') {
               declaration.value = parseInt(declaration.value);
-              styles[toCamelCase(property)] = declaration.value;
-            } else {
-              styles[toCamelCase(property)] = declaration.value;
             }
+
+            styles[toCamelCase(property)] = declaration.value;
           }
         }
       }
-      return JSONResult
     }
-
+    return JSONResult
   }
 }
