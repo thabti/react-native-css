@@ -114,8 +114,7 @@ export default class ReactNativeCss {
           }
         }
       }
-      return JSONResult
     }
-
+    return JSONResult
   }
 }
