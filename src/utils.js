@@ -23,9 +23,10 @@ export default class Utils {
   static outputReactFriendlyStyle(style, outputFile, prettyPrint) {
     var indentation = prettyPrint ? 4 : 0;
     var wstream = fs.createWriteStream(outputFile);
-    wstream.write(`module.exports = require('react-native').StyleSheet.create(${JSON.stringify(style, null, indentation)});`);
+    var output = JSON.stringify(style, null, indentation);
+    wstream.write(`module.exports = require('react-native').StyleSheet.create(${output});`);
     wstream.end();
-    return style;
+    return output;
   }
 
   static contains(string, needle) {

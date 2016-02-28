@@ -4,8 +4,9 @@
   "description": "Style React-Native components with css and built in support for SASS",
   "main": "build/index.js",
   "scripts": {
-    "start": "babel src --out-dir build",
-    "test": "npm start && node ./test/index.test.js"
+    "start": "node_modules/.bin/babel src --out-dir build",
+    "test2": "npm start && node ./test/index.test.js",
+    "test": "node_modules/.bin/babel-tap test/*.test.js"
   },
   "author": "Sabeur Thabti",
   "license": "MIT",
@@ -20,7 +21,10 @@
     "to-camel-case": "~0.2.0"
   },
   "devDependencies": {
-    "babel": "^5.8.23"
+    "babel": "^5.8.23",
+    "babel-tap": "^4.0.0",
+    "expect": "^1.14.0",
+    "tap": "^5.7.0"
   },
   "peerDependencies": {
     "react-native": ">=0.5"

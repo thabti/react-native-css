@@ -45,9 +45,10 @@ var Utils = (function () {
     value: function outputReactFriendlyStyle(style, outputFile, prettyPrint) {
       var indentation = prettyPrint ? 4 : 0;
       var wstream = _fs2["default"].createWriteStream(outputFile);
-      wstream.write("module.exports = require('react-native').StyleSheet.create(" + JSON.stringify(style, null, indentation) + ");");
+      var output = JSON.stringify(style, null, indentation);
+      wstream.write("module.exports = require('react-native').StyleSheet.create(" + output + ");");
       wstream.end();
-      return style;
+      return output;
     }
   }, {
     key: "contains",

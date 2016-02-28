@@ -1,4 +1,4 @@
-dependencies:
+  dependencies:
   pre:
     - npm install
     - npm install -g babel
@@ -6,7 +6,7 @@ dependencies:
 
 test:
   override:
-    - echo "hello"
+    - npm test
 
 deployment:
   production:

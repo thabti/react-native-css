@@ -35,6 +35,7 @@ var ReactNativeCss = (function () {
       var output = arguments.length <= 1 || arguments[1] === undefined ? './style.js' : arguments[1];
       var prettyPrint = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
 
+      var results = {};
       if (_utilsJs2['default'].contains(input, /scss/)) {
         var _require$renderSync = require('node-sass').renderSync({
           file: input,
@@ -52,9 +53,11 @@ var ReactNativeCss = (function () {
             process.exit();
           }
           var styleSheet = _this.toJSS(data);
-          _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, _this.prettyPrint);
+          results = _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, _this.prettyPrint);
         });
       }
+
+      return results;
     }
   }, {
     key: 'toJSS',
@@ -157,13 +160,11 @@ var ReactNativeCss = (function () {
                       });
                     }
                   } else {
-
-                    if (!isNaN(declaration.value)) {
+                    if (!isNaN(declaration.value) && property !== 'font-weight') {
                       declaration.value = parseInt(declaration.value);
-                      styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
-                    } else {
-                      styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
                     }
+
+                    styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
                   }
                 };
 
@@ -233,8 +234,6 @@ var ReactNativeCss = (function () {
               }
             }
           }
-
-          return JSONResult;
         }
       } catch (err) {
         _didIteratorError = true;
@@ -250,6 +249,8 @@ var ReactNativeCss = (function () {
           }
         }
       }
+
+      return JSONResult;
     }
   }]);
 
