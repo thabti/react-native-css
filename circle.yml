@@ -2,7 +2,6 @@ dependencies:
   pre:
     - npm install
     - npm install -g babel
-    - sh login.sh
 
 test:
   override:
@@ -12,6 +11,7 @@ deployment:
   production:
     branch: master
     commands:
+      - sh login.sh
       - git config --global push.default matching
       - git config --global user.email "thabti.sabeur@gmail.com"
       - git config --global user.name "Sabeur Thabti"
