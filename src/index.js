@@ -17,7 +17,11 @@ export default class ReactNativeCss {
 
       let styleSheet = this.toJSS(css.toString());
       utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint);
-      cb(styleSheet);
+
+      if(cb) {
+        cb(styleSheet);
+      }
+
     } else {
       utils.readFile(input, (err, data) => {
         if (err) {
@@ -26,7 +30,10 @@ export default class ReactNativeCss {
         }
         let styleSheet = this.toJSS(data);
         utils.outputReactFriendlyStyle(styleSheet, output, this.prettyPrint);
-        cb(styleSheet);
+
+        if(cb) {
+          cb(styleSheet);
+        }
       });
     }
   }
@@ -34,7 +41,7 @@ export default class ReactNativeCss {
   toJSS(stylesheetString) {
     const changeArr = ['margin', 'padding'];
     const numberize = ['width', 'font-size'];
-    
+
     // CSS properties that are not supported by React Native
     // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
     const unsupported = ['display'];
@@ -58,7 +65,7 @@ export default class ReactNativeCss {
 
           let value = declaration.value;
           let property = declaration.property;
-          
+
           if (utils.arrayContains(property, unsupported)) continue;
 
           if (utils.arrayContains(property, numberize)) {

@@ -46,18 +46,24 @@ var ReactNativeCss = (function () {
 
         var styleSheet = this.toJSS(css.toString());
         _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint);
+
+        // if(cb) {
         cb(styleSheet);
+        // }
       } else {
-        _utilsJs2['default'].readFile(input, function (err, data) {
-          if (err) {
-            console.error(err);
-            process.exit();
-          }
-          var styleSheet = _this.toJSS(data);
-          _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, _this.prettyPrint);
-          cb(styleSheet);
-        });
-      }
+          _utilsJs2['default'].readFile(input, function (err, data) {
+            if (err) {
+              console.error(err);
+              process.exit();
+            }
+            var styleSheet = _this.toJSS(data);
+            _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, _this.prettyPrint);
+
+            // if(cb) {
+            cb(styleSheet);
+            // }
+          });
+        }
     }
   }, {
     key: 'toJSS',
