@@ -115,7 +115,7 @@ var ReactNativeCss = (function () {
                     styles[(0, _toCamelCase2['default'])(property)] = parseInt(value);
                   }
 
-                  if (_utilsJs2['default'].arrayContains(property, changeArr)) {
+                  else if (_utilsJs2['default'].arrayContains(property, changeArr)) {
                     baseDeclaration = {
                       type: 'description'
                     };

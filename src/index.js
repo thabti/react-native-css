@@ -66,7 +66,7 @@ export default class ReactNativeCss {
             styles[toCamelCase(property)] = parseInt(value);
           }
 
-          if (utils.arrayContains(property, changeArr)) {
+          else if (utils.arrayContains(property, changeArr)) {
             var baseDeclaration = {
               type: 'description'
             };
