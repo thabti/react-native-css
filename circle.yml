@@ -19,3 +19,4 @@ deployment:
       - git commit --amend -m 'automated patching [ci skip]'
       - npm version patch
       - npm publish ./
+      - npm push
