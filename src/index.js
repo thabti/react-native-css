@@ -32,7 +32,11 @@ export default class ReactNativeCss {
   }
 
   toJSS(stylesheetString) {
-    const changeArr = ['margin', 'padding'];
+    const changeArr = ['margin', 'padding', 'width'];
+    
+    // CSS properties that are not supported by React Native
+    // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
+    const unsupported = ['display'];
 
     let {stylesheet} = ParseCSS(utils.clean(stylesheetString));
 
@@ -53,6 +57,8 @@ export default class ReactNativeCss {
 
           let value = declaration.value;
           let property = declaration.property;
+          
+          if (utils.arrayContains(property, unsupported)) continue;
 
           if (utils.arrayContains(property, changeArr)) {
             var baseDeclaration = {

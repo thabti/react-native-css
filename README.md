@@ -49,16 +49,17 @@ Given the following CSS:
 
 ``` css
 description {
-  margin-bottom: 20;
-  font-size: 18;
+  margin-bottom: 20px;
+  font-size: 18px;
   text-align: center;
   color: #656656;
 }
 
 container {
-  padding: 30;
-  margin-top: 65;
+  padding: 30px;
+  margin-top: 65px;
   align-items: center;
+  display: block;
 }
 
 ```

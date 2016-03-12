@@ -63,6 +63,7 @@ var ReactNativeCss = (function () {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
       var changeArr = ['margin', 'padding'];
+      var unsupported = ['display'];
 
       var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
 
@@ -105,6 +106,8 @@ var ReactNativeCss = (function () {
 
                   var value = declaration.value;
                   var property = declaration.property;
+          
+                  if (_utilsJs2['default'].arrayContains(property, unsupported)) return 'continue';
 
                   if (_utilsJs2['default'].arrayContains(property, changeArr)) {
                     baseDeclaration = {
