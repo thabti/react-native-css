@@ -62,7 +62,8 @@ var ReactNativeCss = (function () {
   }, {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
-      var changeArr = ['margin', 'padding', 'width'];
+      var changeArr = ['margin', 'padding'];
+      var numberize = ['width', 'font-size'];
       var unsupported = ['display'];
 
       var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
@@ -108,6 +109,11 @@ var ReactNativeCss = (function () {
                   var property = declaration.property;
           
                   if (_utilsJs2['default'].arrayContains(property, unsupported)) return 'continue';
+
+                  if (_utilsJs2['default'].arrayContains(property, numberize)) {
+                    var value = value.replace(/px|\s*/g, '');
+                    styles[(0, _toCamelCase2['default'])(property)] = parseInt(value);
+                  }
 
                   if (_utilsJs2['default'].arrayContains(property, changeArr)) {
                     baseDeclaration = {
