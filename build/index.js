@@ -62,7 +62,7 @@ var ReactNativeCss = (function () {
   }, {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
-      var changeArr = ['margin', 'padding'];
+      var changeArr = ['margin', 'padding', 'width'];
       var unsupported = ['display'];
 
       var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
