@@ -29,13 +29,13 @@ var ReactNativeCss = (function () {
 
   _createClass(ReactNativeCss, [{
     key: 'parse',
-    value: function parse(input) {
+    value: function parse(input, output, prettyPrint, cb) {
+      if (output === undefined) output = './style.js';
+
       var _this = this;
 
-      var output = arguments.length <= 1 || arguments[1] === undefined ? './style.js' : arguments[1];
-      var prettyPrint = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+      if (prettyPrint === undefined) prettyPrint = false;
 
-      var results = {};
       if (_utilsJs2['default'].contains(input, /scss/)) {
         var _require$renderSync = require('node-sass').renderSync({
           file: input,
@@ -45,7 +45,8 @@ var ReactNativeCss = (function () {
         var css = _require$renderSync.css;
 
         var styleSheet = this.toJSS(css.toString());
-        return _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint);
+        _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint);
+        cb(styleSheet);
       } else {
         _utilsJs2['default'].readFile(input, function (err, data) {
           if (err) {
@@ -53,17 +54,19 @@ var ReactNativeCss = (function () {
             process.exit();
           }
           var styleSheet = _this.toJSS(data);
-          results = _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, _this.prettyPrint);
+          _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, _this.prettyPrint);
+          cb(styleSheet);
         });
       }
-
-      return results;
     }
   }, {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
       var changeArr = ['margin', 'padding'];
       var numberize = ['width', 'font-size'];
+
+      // CSS properties that are not supported by React Native
+      // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
       var unsupported = ['display'];
 
       var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
@@ -107,15 +110,14 @@ var ReactNativeCss = (function () {
 
                   var value = declaration.value;
                   var property = declaration.property;
-          
+
                   if (_utilsJs2['default'].arrayContains(property, unsupported)) return 'continue';
 
                   if (_utilsJs2['default'].arrayContains(property, numberize)) {
-                    var value = value.replace(/px|\s*/g, '');
-                    styles[(0, _toCamelCase2['default'])(property)] = parseInt(value);
-                  }
+                    value = value.replace(/px|\s*/g, '');
 
-                  else if (_utilsJs2['default'].arrayContains(property, changeArr)) {
+                    styles[(0, _toCamelCase2['default'])(property)] = parseInt(value);
+                  } else if (_utilsJs2['default'].arrayContains(property, changeArr)) {
                     baseDeclaration = {
                       type: 'description'
                     };
@@ -207,6 +209,7 @@ var ReactNativeCss = (function () {
 
               var _iterator3, _step3;
 
+              var value;
               var baseDeclaration;
               var values;
               var length;
