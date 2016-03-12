@@ -75,3 +75,19 @@ t.test("Parse SCSS error", function(t) {
 
         });
       });
+
+t.test("Parse CSS and ignore unsupported property", function(t) {
+  css.parse('./test/fixtures/style-unsupported.scss', './test/fixtures/style-unsupported.js', false, function(data) {
+    expect(data).toEqual({ container: { background: 'white' } })
+    t.end();
+  });
+});
+
+t.test("Parse CSS and turn properties into numbers", function(t) {
+  css.parse('./test/fixtures/style-number.scss', './test/fixtures/style-number.js', false, function(data) {
+    expect(data).toEqual({ text:
+      { fontSize: 12,
+        width: 100 } })
+    t.end();
+  });
+});
