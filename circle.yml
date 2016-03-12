@@ -12,12 +12,10 @@ deployment:
   production:
     branch: master
     commands:
-      - npm version patch
       - echo "doing a patch update!"
       - git config --global push.default matching
       - git config --global user.email "thabti.sabeur@gmail.com"
       - git config --global user.name "Sabeur Thabti"
-      - git add .
       - git commit --amend -m 'automated patching [ci skip]'
+      - npm version patch
       - npm publish ./
-      - git push
