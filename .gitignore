@@ -1,6 +1,6 @@
 node_modules
 node_modules/
-
+test/fixtures/*.js
 .DS_STORE
 .idea
 npm-debug.log
