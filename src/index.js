@@ -40,7 +40,7 @@ export default class ReactNativeCss {
 
   toJSS(stylesheetString) {
     const changeArr = ['margin', 'padding'];
-    const numberize = ['width', 'font-size'];
+    const numberize = ['width', 'height', 'font-size'];
 
     // CSS properties that are not supported by React Native
     // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
