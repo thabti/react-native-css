@@ -3,13 +3,12 @@ import fs from 'fs';
 export default class Utils {
 
   static arrayContains(value, arr) {
-    var flag = false;
     for (var i = 0; i < arr.length; i++) {
       if (value === arr[i]) {
         return true
       }
     }
-    return flag;
+    return false;
   }
 
   static clean(string) {

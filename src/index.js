@@ -39,8 +39,16 @@ export default class ReactNativeCss {
   }
 
   toJSS(stylesheetString) {
+		const directions = ['top', 'right', 'bottom', 'left'];
     const changeArr = ['margin', 'padding'];
-    const numberize = ['width', 'font-size'];
+    const numberize = ['width', 'height', 'font-size', 'line-height', 'border-radius', 'border-width'].concat(directions);
+
+		directions.forEach((dir) => {
+			numberize.push(`border-${dir}-width`);
+			changeArr.forEach((prop) => {
+				numberize.push(`${prop}-${dir}`);
+			})
+		});
 
     // CSS properties that are not supported by React Native
     // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
@@ -78,7 +86,7 @@ export default class ReactNativeCss {
               type: 'description'
             };
 
-            var values = value.replace(/px|\s*/g, '').split(',');
+            var values = value.replace(/px/g, '').split(/[\s,]+/);
 
             values.forEach(function (value, index, arr) {
               arr[index] = parseInt(value);

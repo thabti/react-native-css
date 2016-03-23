@@ -91,3 +91,10 @@ t.test("Parse CSS and turn properties into numbers", function(t) {
     t.end();
   });
 });
+
+t.test("Regression test for issue #26", function(t) {
+	css.parse('./test/fixtures/style-test.css', './test/fixtures/style-test.js', false, function(data) {
+		expect(data).toEqual({"row":{"top":50,"paddingTop":10,"paddingBottom":10,"paddingRight":10,"paddingLeft":5,"flexDirection":"row","marginTop":10,"marginLeft":10,"marginRight":10,"marginBottom":2,"borderBottomWidth":5}});
+		t.end();
+	});
+});
