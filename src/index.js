@@ -78,7 +78,7 @@ export default class ReactNativeCss {
               type: 'description'
             };
 
-            var values = value.replace(/px|\s*/g, '').split(',');
+            var values = value.replace(/px/g, '').split(/[\s,]+/);
 
             values.forEach(function (value, index, arr) {
               arr[index] = parseInt(value);
