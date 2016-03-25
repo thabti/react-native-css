@@ -29,7 +29,7 @@ export default class ReactNativeCss {
           process.exit();
         }
         let styleSheet = this.toJSS(data);
-        utils.outputReactFriendlyStyle(styleSheet, output, this.prettyPrint);
+        utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint);
 
         if(cb) {
           cb(styleSheet);
@@ -39,16 +39,16 @@ export default class ReactNativeCss {
   }
 
   toJSS(stylesheetString) {
-		const directions = ['top', 'right', 'bottom', 'left'];
+    const directions = ['top', 'right', 'bottom', 'left'];
     const changeArr = ['margin', 'padding'];
     const numberize = ['width', 'height', 'font-size', 'line-height', 'border-radius', 'border-width'].concat(directions);
 
-		directions.forEach((dir) => {
-			numberize.push(`border-${dir}-width`);
-			changeArr.forEach((prop) => {
-				numberize.push(`${prop}-${dir}`);
-			})
-		});
+    directions.forEach((dir) => {
+      numberize.push(`border-${dir}-width`);
+      changeArr.forEach((prop) => {
+        numberize.push(`${prop}-${dir}`);
+      })
+    });
 
     // CSS properties that are not supported by React Native
     // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
