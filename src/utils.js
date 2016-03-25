@@ -21,10 +21,13 @@ export default class Utils {
 
   static outputReactFriendlyStyle(style, outputFile, prettyPrint) {
     var indentation = prettyPrint ? 4 : 0;
-    var wstream = fs.createWriteStream(outputFile);
     var output = JSON.stringify(style, null, indentation);
-    wstream.write(`module.exports = require('react-native').StyleSheet.create(${output});`);
-    wstream.end();
+
+  	// Write to file
+  	fs.writeFileSync(
+		outputFile,
+		`module.exports = require('react-native').StyleSheet.create(${output});`
+	);
     return output;
   }
 

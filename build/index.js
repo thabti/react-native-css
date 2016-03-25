@@ -68,8 +68,16 @@ var ReactNativeCss = (function () {
   }, {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
+      var directions = ['top', 'right', 'bottom', 'left'];
       var changeArr = ['margin', 'padding'];
-      var numberize = ['width', 'font-size'];
+      var numberize = ['width', 'height', 'font-size', 'line-height', 'border-radius', 'border-width'].concat(directions);
+
+      directions.forEach(function (dir) {
+        numberize.push('border-' + dir + '-width');
+        changeArr.forEach(function (prop) {
+          numberize.push(prop + '-' + dir);
+        });
+      });
 
       // CSS properties that are not supported by React Native
       // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
@@ -127,7 +135,7 @@ var ReactNativeCss = (function () {
                     baseDeclaration = {
                       type: 'description'
                     };
-                    values = value.replace(/px|\s*/g, '').split(',');
+                    values = value.replace(/px/g, '').split(/[\s,]+/);
 
                     values.forEach(function (value, index, arr) {
                       arr[index] = parseInt(value);

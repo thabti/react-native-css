@@ -22,13 +22,12 @@ var Utils = (function () {
   _createClass(Utils, null, [{
     key: "arrayContains",
     value: function arrayContains(value, arr) {
-      var flag = false;
       for (var i = 0; i < arr.length; i++) {
         if (value === arr[i]) {
           return true;
         }
       }
-      return flag;
+      return false;
     }
   }, {
     key: "clean",
@@ -44,10 +43,10 @@ var Utils = (function () {
     key: "outputReactFriendlyStyle",
     value: function outputReactFriendlyStyle(style, outputFile, prettyPrint) {
       var indentation = prettyPrint ? 4 : 0;
-      var wstream = _fs2["default"].createWriteStream(outputFile);
       var output = JSON.stringify(style, null, indentation);
-      wstream.write("module.exports = require('react-native').StyleSheet.create(" + output + ");");
-      wstream.end();
+
+      // Write to file
+      _fs2["default"].writeFileSync(outputFile, "module.exports = require('react-native').StyleSheet.create(" + output + ");");
       return output;
     }
   }, {
