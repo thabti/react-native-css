@@ -78,7 +78,7 @@ export default class ReactNativeCss {
 
           if (utils.arrayContains(property, numberize)) {
             var value = value.replace(/px|\s*/g, '');
-            styles[toCamelCase(property)] = parseInt(value);
+            styles[toCamelCase(property)] = parseFloat(value);
           }
 
           else if (utils.arrayContains(property, changeArr)) {
@@ -131,7 +131,7 @@ export default class ReactNativeCss {
           }
           else {
             if (!isNaN(declaration.value) && property !== 'font-weight') {
-              declaration.value = parseInt(declaration.value);
+              declaration.value = parseFloat(declaration.value);
             }
 
             styles[toCamelCase(property)] = declaration.value;
