@@ -19,15 +19,13 @@ export default class Utils {
     fs.readFile(file, "utf8", cb);
   }
 
-  static outputReactFriendlyStyle(style, outputFile, prettyPrint) {
+  static outputReactFriendlyStyle(style, outputFile, prettyPrint, literalObject) {
     var indentation = prettyPrint ? 4 : 0;
-    var output = JSON.stringify(style, null, indentation);
-
-  	// Write to file
-  	fs.writeFileSync(
-		outputFile,
-		`module.exports = require('react-native').StyleSheet.create(${output});`
-	);
+    var jsonOutput = JSON.stringify(style, null, indentation);
+    var output = "module.exports = ";
+    output += (literalObject) ? `${jsonOutput}` : `require('react-native').StyleSheet.create(${jsonOutput});`;
+    // Write to file
+    fs.writeFileSync(outputFile, output);
     return output;
   }
 

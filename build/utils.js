@@ -41,12 +41,13 @@ var Utils = (function () {
     }
   }, {
     key: "outputReactFriendlyStyle",
-    value: function outputReactFriendlyStyle(style, outputFile, prettyPrint) {
+    value: function outputReactFriendlyStyle(style, outputFile, prettyPrint, literalObject) {
       var indentation = prettyPrint ? 4 : 0;
-      var output = JSON.stringify(style, null, indentation);
-
+      var jsonOutput = JSON.stringify(style, null, indentation);
+      var output = "module.exports = ";
+      output += literalObject ? "" + jsonOutput : "require('react-native').StyleSheet.create(" + jsonOutput + ");";
       // Write to file
-      _fs2["default"].writeFileSync(outputFile, "module.exports = require('react-native').StyleSheet.create(" + output + ");");
+      _fs2["default"].writeFileSync(outputFile, output);
       return output;
     }
   }, {

@@ -38,6 +38,7 @@ Flags
 - "-i" takes a input (optional)
 - "-o" takes an output path (optional)
 - "-p" or "--pretty" - pretty print the resulting compiled output
+- "-l" or "--literal" - generates a javascript literal object without StyleSheet.create wrapper
 
 ## Screenshot
 
@@ -71,7 +72,14 @@ React-native-css will generate to the following:
 module.exports = require('react-native').StyleSheet.create(
   {"description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}}
   );
-```
+```  
+You can make use of --literal argument and instead it will generate:
+``` javascript
+// style.js
+module.exports = {
+  "description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}
+  }
+```  
 
 # Usage
 ```js
