@@ -98,3 +98,11 @@ t.test("Regression test for issue #26", function(t) {
     t.end();
   });
 });
+
+t.test("Argument --literal generates a javascript literal object", function(t) {
+  css.parse('./test/fixtures/style-20.scss', './test/fixtures/style-test-literal.js', false, true, function(data) {
+    var styles = require('./fixtures/style-test-literal.js');
+    expect(styles.maincontainer.backgroundColor).toEqual("#F5FCFF");
+    t.end();
+  });
+});
