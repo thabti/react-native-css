@@ -11,42 +11,43 @@ var help = argv['h'] || argv['help'];
 var watch = argv['w'] || argv['watch'];
 var prettyPrint = argv['p'] || argv['pretty'] ? true : false;
 var inputOutput = (argv['i'] && argv['o']) || argv._[0] && argv._[1];
+var literalObject = argv['l'] || argv['literal'] ? true : false;
 
 if(inputOutput) {
-	var inputArgs = argv['i'] || argv._[0];
-	var outputArgs = argv['o'] || argv._[1];
+  var inputArgs = argv['i'] || argv._[0];
+  var outputArgs = argv['o'] || argv._[1];
 
-	var input = path.resolve(process.cwd(), inputArgs);
-	var output = path.resolve(process.cwd(), outputArgs);
+  var input = path.resolve(process.cwd(), inputArgs);
+  var output = path.resolve(process.cwd(), outputArgs);
 
-	css.parse(input, output, prettyPrint);
+  css.parse(input, output, prettyPrint, literalObject);
 
-	if(watch) {
-		console.log('Watching for changes on:'.green, inputArgs);
-		console.log('ctrl + c to exit'.red.underline);
+  if(watch) {
+    console.log('Watching for changes on:'.green, inputArgs);
+    console.log('ctrl + c to exit'.red.underline);
 
-		var watcher = chokidar.watch(input, {
-			ignored: /[\/\\]\./, persistent: true
-		}).on('change', function(path) {
-			console.log('File', inputArgs, 'has been changed'.green);
-			css.parse(input, output, prettyPrint);
-		});
-	}
+    var watcher = chokidar.watch(input, {
+      ignored: /[\/\\]\./, persistent: true
+    }).on('change', function(path) {
+      console.log('File', inputArgs, 'has been changed'.green);
+      css.parse(input, output, prettyPrint, literalObject);
+    });
+  }
 }else if(help ) {
-	message();
+  message();
 } else {
-	message();
+  message();
 }
 
 function message() {
-	console.log('version ' + pkgVersion);
-	console.log('example: react-native-css -i ../css/main.css -o ../styles/main.js -w '.blue);
-	console.log('example: react-native-css ../css/main.scss ../styles/main.js '.green);
+  console.log('version ' + pkgVersion);
+  console.log('example: react-native-css -i ../css/main.css -o ../styles/main.js -w '.blue);
+  console.log('example: react-native-css ../css/main.scss ../styles/main.js '.green);
 }
 
 require('request')('https://raw.githubusercontent.com/sabeurthabti/react-native-css/master/package.json', function (error, response, body) {
   if (!error && response.statusCode == 200) {
-		var version = JSON.parse(body).version;
-		if(version !== pkgVersion) console.log(`Running out-dated version ${pkgVersion}, please run 'npm update react-native-css'`.red)
+    var version = JSON.parse(body).version;
+    if(version !== pkgVersion) console.log(`Running out-dated version ${pkgVersion}, please run 'npm update react-native-css'`.red)
   }
 })
