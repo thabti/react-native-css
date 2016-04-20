@@ -26,9 +26,6 @@
     "expect": "^1.14.0",
     "tap": "^5.7.0"
   },
-  "peerDependencies": {
-    "react-native": ">=0.5"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/sabeurthabti/react-native-css.git"
