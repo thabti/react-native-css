@@ -1,3 +1,8 @@
+# No longer under-active develeopment
+I am willing to accept pull requests and if anyone wants to become a contributor please raise an issue. 
+
+
+
 # react-native-css (and SCSS) [![Circle CI](https://circleci.com/gh/sabeurthabti/react-native-css.svg?style=svg&circle-token=a140907997e6a37c6c5ec75f04e8150cef049ff6)](https://circleci.com/gh/sabeurthabti/react-native-css) [![NPM](https://img.shields.io/npm/dm/react-native-css.svg?style=flat-square)](https://www.npmjs.com/package/react-native-css)
 
  React-native-css turns valid CSS/SASS into the Facebook subset of CSS.
