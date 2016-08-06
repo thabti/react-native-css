@@ -106,3 +106,10 @@ t.test("Argument --literal generates a javascript literal object", function(t) {
     t.end();
   });
 });
+
+t.test("Parse CSS and expand shorthand properties", function(t){
+  css.parse('./test/fixtures/style-expand.css','./test/fixtures/style-expand.js', false, false,function(data) {
+    expect(data).toEqual({"container":{"paddingTop":10,"paddingBottom":10,"paddingLeft":20,"paddingRight":20,"marginLeft":15,"marginRight":15,"marginTop":10,"marginBottom":30,"borderTopWidth":10,"borderBottomWidth":10,"borderLeftWidth":30,"borderRightWidth":30,"borderTopLeftRadius":10,"borderBottomRightRadius":10,"borderBottomLeftRadius":30,"borderTopRightRadius":30},"second":{"marginTop":10,"marginBottom":10,"marginRight":10,"marginLeft":10,"paddingTop":1,"paddingRight":2,"paddingBottom":3,"paddingLeft":4,"borderTopWidth":1,"borderRightWidth":2,"borderBottomWidth":3,"borderLeftWidth":4,"borderTopLeftRadius":1,"borderTopRightRadius":2,"borderBottomRightRadius":3,"borderBottomLeftRadius":4}})
+    t.end()
+  });
+});

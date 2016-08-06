@@ -70,8 +70,16 @@ var ReactNativeCss = (function () {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
       var directions = ['top', 'right', 'bottom', 'left'];
-      var changeArr = ['margin', 'padding'];
-      var numberize = ['width', 'height', 'font-size', 'line-height', 'border-radius', 'border-width'].concat(directions);
+      var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
+      var numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
+      var directionMaps = {
+        'border-radius': {
+          'Top': 'top-left',
+          'Right': 'top-right',
+          'Bottom': 'bottom-right',
+          'Left': 'bottom-left'
+        }
+      };
 
       directions.forEach(function (dir) {
         numberize.push('border-' + dir + '-width');
@@ -79,6 +87,12 @@ var ReactNativeCss = (function () {
           numberize.push(prop + '-' + dir);
         });
       });
+
+      function directionToPropertyName(property, direction) {
+        var names = property.split('-');
+        names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
+        return (0, _toCamelCase2['default'])(names.join('-'));
+      }
 
       // CSS properties that are not supported by React Native
       // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
@@ -149,7 +163,7 @@ var ReactNativeCss = (function () {
 
                       for (_i = 0; _i < _arr.length; _i++) {
                         var prop = _arr[_i];
-                        styles[property + prop] = values[0];
+                        styles[directionToPropertyName(property, prop)] = values[0];
                       }
                     }
 
@@ -158,13 +172,13 @@ var ReactNativeCss = (function () {
 
                       for (_i2 = 0; _i2 < _arr2.length; _i2++) {
                         var prop = _arr2[_i2];
-                        styles[property + prop] = values[0];
+                        styles[directionToPropertyName(property, prop)] = values[0];
                       }
 
-                      _arr3 = ['Top', 'Bottom'];
+                      _arr3 = ['Left', 'Right'];
                       for (_i3 = 0; _i3 < _arr3.length; _i3++) {
                         var prop = _arr3[_i3];
-                        styles[property + prop] = values[1];
+                        styles[directionToPropertyName(property, prop)] = values[1];
                       }
                     }
 
@@ -173,16 +187,16 @@ var ReactNativeCss = (function () {
 
                       for (_i4 = 0; _i4 < _arr4.length; _i4++) {
                         var prop = _arr4[_i4];
-                        styles[property + prop] = values[1];
+                        styles[directionToPropertyName(property, prop)] = values[1];
                       }
 
-                      styles[property + 'Top'] = values[0];
-                      styles[property + 'Bottom'] = values[2];
+                      styles[directionToPropertyName(property, 'Top')] = values[0];
+                      styles[directionToPropertyName(property, 'Bottom')] = values[2];
                     }
 
                     if (length === 4) {
                       ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-                        styles[property + prop] = values[index];
+                        styles[directionToPropertyName(property, prop)] = values[index];
                       });
                     }
                   } else {

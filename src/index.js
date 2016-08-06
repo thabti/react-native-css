@@ -40,8 +40,8 @@ export default class ReactNativeCss {
 
   toJSS(stylesheetString) {
     const directions = ['top', 'right', 'bottom', 'left'];
-    const changeArr = ['margin', 'padding'];
-    const numberize = ['width', 'height', 'font-size', 'line-height', 'border-radius', 'border-width'].concat(directions);
+    const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
+    const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
 
     directions.forEach((dir) => {
       numberize.push(`border-${dir}-width`);
@@ -49,6 +49,23 @@ export default class ReactNativeCss {
         numberize.push(`${prop}-${dir}`);
       })
     });
+
+    //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
+    const directionMaps = {
+      'border-radius':{
+        'Top':'top-left',
+        'Right':'top-right',
+        'Bottom':'bottom-right',
+        'Left': 'bottom-left'
+      }
+    };
+
+    //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
+    function directionToPropertyName(property,direction){
+      let names = property.split('-');
+      names.splice(1,0,directionMaps[property]?directionMaps[property][direction]:direction);
+      return toCamelCase(names.join('-'));
+    }
 
     // CSS properties that are not supported by React Native
     // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
@@ -97,7 +114,7 @@ export default class ReactNativeCss {
             if (length === 1) {
 
               for (let prop of ['Top', 'Bottom', 'Right', 'Left']) {
-                styles[property + prop] = values[0];
+                styles[directionToPropertyName(property,prop)] = values[0];
               }
 
             }
@@ -105,27 +122,27 @@ export default class ReactNativeCss {
             if (length === 2) {
 
               for (let prop of ['Top', 'Bottom']) {
-                styles[property + prop] = values[0];
+                styles[directionToPropertyName(property,prop)] = values[0];
               }
 
-              for (let prop of ['Top', 'Bottom']) {
-                styles[property + prop] = values[1];
+              for (let prop of ['Left', 'Right']) {
+                styles[directionToPropertyName(property,prop)] = values[1];
               }
             }
 
             if (length === 3) {
 
               for (let prop of ['Left', 'Right']) {
-                styles[property + prop] = values[1];
+                styles[directionToPropertyName(property,prop)] = values[1];
               }
 
-              styles[`${property}Top`] = values[0];
-              styles[`${property}Bottom`] = values[2];
+              styles[directionToPropertyName(property,'Top')] = values[0];
+              styles[directionToPropertyName(property,'Bottom')] = values[2];
             }
 
             if (length === 4) {
               ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-                styles[property + prop] = values[index];
+                styles[directionToPropertyName(property,prop)] = values[index];
               });
             }
           }
