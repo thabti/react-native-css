@@ -1,0 +1,13 @@
+container {
+  padding: 10px 20px;
+  margin: 10px 15px 30px;
+  border-width: 10px 30px;
+  border-radius: 10px 30px;
+}
+
+second {
+  margin: 10px;
+  padding: 1px 2px 3px 4px;
+  border-width: 1px 2px 3px 4px;
+  border-radius: 1px 2px 3px 4px;
+}
