@@ -42,6 +42,18 @@ export default class ReactNativeCss {
     const directions = ['top', 'right', 'bottom', 'left'];
     const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
     const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
+    //special properties and shorthands that need to be broken down separately
+    const specialProperties = {};
+    ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(name=> {
+      specialProperties[name] = {
+        regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
+        map: {
+          1: `${name}-width`,
+          3: name == 'border' ? `${name}-style` : null,
+          4: `${name}-color`
+        }
+      }
+    });
 
     directions.forEach((dir) => {
       numberize.push(`border-${dir}-width`);
@@ -91,6 +103,27 @@ export default class ReactNativeCss {
           let value = declaration.value;
           let property = declaration.property;
 
+          if (specialProperties[property]) {
+            let special = specialProperties[property],
+                matches = special.regex.exec(value)
+            if (matches) {
+              if (typeof special.map === 'function') {
+                special.map(matches, styles, rule.declarations)
+              } else {
+                for (let key in special.map) {
+                  if (matches[key] && special.map[key]) {
+                    rule.declarations.push({
+                      property: special.map[key],
+                      value: matches[key],
+                      type: 'declaration'
+                    })
+                  }
+                }
+              }
+              continue;
+            }
+          }
+
           if (utils.arrayContains(property, unsupported)) continue;
 
           if (utils.arrayContains(property, numberize)) {
@@ -113,36 +146,34 @@ export default class ReactNativeCss {
 
             if (length === 1) {
 
-              for (let prop of ['Top', 'Bottom', 'Right', 'Left']) {
-                styles[directionToPropertyName(property,prop)] = values[0];
-              }
+              styles[toCamelCase(property)] = values[0]
 
             }
 
             if (length === 2) {
 
               for (let prop of ['Top', 'Bottom']) {
-                styles[directionToPropertyName(property,prop)] = values[0];
+                styles[directionToPropertyName(property, prop)] = values[0];
               }
 
               for (let prop of ['Left', 'Right']) {
-                styles[directionToPropertyName(property,prop)] = values[1];
+                styles[directionToPropertyName(property, prop)] = values[1];
               }
             }
 
             if (length === 3) {
 
               for (let prop of ['Left', 'Right']) {
-                styles[directionToPropertyName(property,prop)] = values[1];
+                styles[directionToPropertyName(property, prop)] = values[1];
               }
 
-              styles[directionToPropertyName(property,'Top')] = values[0];
-              styles[directionToPropertyName(property,'Bottom')] = values[2];
+              styles[directionToPropertyName(property, 'Top')] = values[0];
+              styles[directionToPropertyName(property, 'Bottom')] = values[2];
             }
 
             if (length === 4) {
               ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-                styles[directionToPropertyName(property,prop)] = values[index];
+                styles[directionToPropertyName(property, prop)] = values[index];
               });
             }
           }

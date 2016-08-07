@@ -23,10 +23,7 @@ t.test("Parse SCSS", function(t) {
         textAlign: 'center',
         color: '#656656' },
         container:
-        { paddingTop: 30,
-          paddingBottom: 30,
-          paddingRight: 30,
-          paddingLeft: 30,
+        { padding: 30,
           marginTop: 65,
           alignItems: 'center' } })
           t.end();
@@ -45,10 +42,7 @@ css.parse('./test/fixtures/style.scss', './test/fixtures/stylescss.js', false, f
       textAlign: 'center',
       color: '#656656' },
       container:
-      { paddingTop: 30,
-        paddingBottom: 30,
-        paddingRight: 30,
-        paddingLeft: 30,
+      { padding: 30,
         marginTop: 65,
         alignItems: 'center' } })
         t.end();
@@ -94,7 +88,7 @@ t.test("Parse CSS and turn properties into numbers", function(t) {
 
 t.test("Regression test for issue #26", function(t) {
   css.parse('./test/fixtures/style-test.css', './test/fixtures/style-test.js', false, false, function(data) {
-    expect(data).toEqual({"row":{"top":50,"paddingTop":10,"paddingBottom":10,"paddingRight":10,"paddingLeft":5,"flexDirection":"row","marginTop":10,"marginLeft":10,"marginRight":10,"marginBottom":2,"borderBottomWidth":5,"opacity":0.6}});
+    expect(data).toEqual({"row":{"top":50,"paddingTop":10,"paddingBottom":10,"paddingRight":10,"paddingLeft":5,"flexDirection":"row","margin":10,"marginBottom":2,"borderBottomWidth":5,"opacity":0.6}});
     t.end();
   });
 });
@@ -109,7 +103,7 @@ t.test("Argument --literal generates a javascript literal object", function(t) {
 
 t.test("Parse CSS and expand shorthand properties", function(t){
   css.parse('./test/fixtures/style-expand.css','./test/fixtures/style-expand.js', false, false,function(data) {
-    expect(data).toEqual({"container":{"paddingTop":10,"paddingBottom":10,"paddingLeft":20,"paddingRight":20,"marginLeft":15,"marginRight":15,"marginTop":10,"marginBottom":30,"borderTopWidth":10,"borderBottomWidth":10,"borderLeftWidth":30,"borderRightWidth":30,"borderTopLeftRadius":10,"borderBottomRightRadius":10,"borderBottomLeftRadius":30,"borderTopRightRadius":30},"second":{"marginTop":10,"marginBottom":10,"marginRight":10,"marginLeft":10,"paddingTop":1,"paddingRight":2,"paddingBottom":3,"paddingLeft":4,"borderTopWidth":1,"borderRightWidth":2,"borderBottomWidth":3,"borderLeftWidth":4,"borderTopLeftRadius":1,"borderTopRightRadius":2,"borderBottomRightRadius":3,"borderBottomLeftRadius":4}})
+    expect(data).toEqual({"container":{"paddingTop":10,"paddingBottom":10,"paddingLeft":20,"paddingRight":20,"marginLeft":15,"marginRight":15,"marginTop":10,"marginBottom":30,"borderTopWidth":10,"borderBottomWidth":10,"borderLeftWidth":30,"borderRightWidth":30,"borderTopLeftRadius":10,"borderBottomRightRadius":10,"borderBottomLeftRadius":30,"borderTopRightRadius":30},"second":{"margin":10,"paddingTop":1,"paddingRight":2,"paddingBottom":3,"paddingLeft":4,"borderTopWidth":1,"borderRightWidth":2,"borderBottomWidth":3,"borderLeftWidth":4,"borderTopLeftRadius":1,"borderTopRightRadius":2,"borderBottomRightRadius":3,"borderBottomLeftRadius":4},"borderSimple":{"borderWidth":1,"borderStyle":"solid","borderColor":"#eee"},"borderNoStyle":{"borderWidth":1,"borderColor":"#eee"},"borderNoUnit":{"borderWidth":1,"borderStyle":"solid","borderColor":"#eee"},"borderNamedColor":{"borderWidth":1,"borderStyle":"solid","borderColor":"blue"},"borderRGBColor":{"borderWidth":1,"borderStyle":"solid","borderColor":"rgb(100, 32, 250)"},"borderRGBAColor":{"borderWidth":1,"borderStyle":"solid","borderColor":"rgba(100, 32, 250, .5)"},"shadow":{"shadowColor":"#EEE","shadowOpacity":0.5,"shadowRadius":6,"shadowOffset":{"width":1,"height":2}},"shadowOffset":{"shadowOffset":{"width":1,"height":2}}})
     t.end()
   });
 });
