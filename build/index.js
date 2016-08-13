@@ -85,6 +85,13 @@ var ReactNativeCss = (function () {
         };
       });
 
+      directions.forEach(function (dir) {
+        numberize.push('border-' + dir + '-width');
+        changeArr.forEach(function (prop) {
+          numberize.push(prop + '-' + dir);
+        });
+      });
+
       //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
       var directionMaps = {
         'border-radius': {
@@ -95,17 +102,7 @@ var ReactNativeCss = (function () {
         }
       };
 
-      directions.forEach(function (dir) {
-        numberize.push('border-' + dir + '-width');
-        changeArr.forEach(function (prop) {
-          numberize.push(prop + '-' + dir);
-        });
-      });
-
-
-
-      //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and
-      // border-radius
+      //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
       function directionToPropertyName(property, direction) {
         var names = property.split('-');
         names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
@@ -113,8 +110,7 @@ var ReactNativeCss = (function () {
       }
 
       // CSS properties that are not supported by React Native
-      // The list of supported properties is at
-      // https://facebook.github.io/react-native/docs/style.html#supported-properties
+      // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
       var unsupported = ['display'];
 
       var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
@@ -131,9 +127,7 @@ var ReactNativeCss = (function () {
         for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var rule = _step.value;
 
-          if (rule.type !== 'rule') {
-            continue;
-          }
+          if (rule.type !== 'rule') continue;
 
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
@@ -156,9 +150,7 @@ var ReactNativeCss = (function () {
                 var _loop2 = function () {
                   var declaration = _step3.value;
 
-                  if (declaration.type !== 'declaration') {
-                    return 'continue';
-                  }
+                  if (declaration.type !== 'declaration') return 'continue';
 
                   var value = declaration.value;
                   var property = declaration.property;
@@ -184,9 +176,7 @@ var ReactNativeCss = (function () {
                     }
                   }
 
-                  if (_utilsJs2['default'].arrayContains(property, unsupported)) {
-                    return 'continue';
-                  }
+                  if (_utilsJs2['default'].arrayContains(property, unsupported)) return 'continue';
 
                   if (_utilsJs2['default'].arrayContains(property, numberize)) {
                     value = value.replace(/px|\s*/g, '');
