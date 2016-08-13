@@ -12,6 +12,7 @@ var watch = argv['w'] || argv['watch'];
 var prettyPrint = argv['p'] || argv['pretty'] ? true : false;
 var inputOutput = (argv['i'] && argv['o']) || argv._[0] && argv._[1];
 var literalObject = argv['l'] || argv['literal'] ? true : false;
+var useInheritance = argv['e'] || argv['inherit'] ? true : false;
 
 if(inputOutput) {
   var inputArgs = argv['i'] || argv._[0];
@@ -20,7 +21,7 @@ if(inputOutput) {
   var input = path.resolve(process.cwd(), inputArgs);
   var output = path.resolve(process.cwd(), outputArgs);
 
-  css.parse(input, output, prettyPrint, literalObject);
+  css.parse(input, output, prettyPrint, literalObject, useInheritance);
 
   if(watch) {
     console.log('Watching for changes on:'.green, inputArgs);
@@ -30,7 +31,7 @@ if(inputOutput) {
       ignored: /[\/\\]\./, persistent: true
     }).on('change', function(path) {
       console.log('File', inputArgs, 'has been changed'.green);
-      css.parse(input, output, prettyPrint, literalObject);
+      css.parse(input, output, prettyPrint, literalObject, useInheritance);
     });
   }
 }else if(help ) {

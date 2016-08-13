@@ -1,13 +1,19 @@
 import ParseCSS from 'css-parse';
 import toCamelCase from 'to-camel-case';
-import utils from './utils.js'
+import utils from './utils';
+import inheritance,{numeric} from './inheritance';
+
 export default class ReactNativeCss {
 
   constructor() {
 
   }
 
-  parse(input, output = './style.js', prettyPrint = false, literalObject = false, cb) {
+  parse(input, output = './style.js', prettyPrint = false, literalObject = false, useInheritance = false, cb) {
+    if(typeof useInheritance === 'function'){
+      cb = useInheritance
+      useInheritance = false
+    }
     if(utils.contains(input, /scss/)) {
 
       let {css} = require('node-sass').renderSync({
@@ -15,7 +21,7 @@ export default class ReactNativeCss {
         outputStyle: 'compressed'
       });
 
-      let styleSheet = this.toJSS(css.toString());
+      let styleSheet = this.toJSS(css.toString(),useInheritance);
       utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
 
       if(cb) {
@@ -28,7 +34,7 @@ export default class ReactNativeCss {
           console.error(err);
           process.exit();
         }
-        let styleSheet = this.toJSS(data);
+        let styleSheet = this.toJSS(data,useInheritance);
         utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
 
         if(cb) {
@@ -38,10 +44,10 @@ export default class ReactNativeCss {
     }
   }
 
-  toJSS(stylesheetString) {
+  toJSS(stylesheetString,useInheritance=false) {
     const directions = ['top', 'right', 'bottom', 'left'];
     const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
-    const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
+    const numberize = utils.filterArray(['width', 'height', 'font-size', 'line-height'].concat(directions),useInheritance?numeric:[]);
     //special properties and shorthands that need to be broken down separately
     const specialProperties = {};
     ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(name=> {
@@ -91,7 +97,12 @@ export default class ReactNativeCss {
       if (rule.type !== 'rule') continue;
 
       for (let selector of rule.selectors) {
-        selector = selector.replace(/\.|#/g, '');
+        if (useInheritance) {
+
+        } else {
+          selector = selector.replace(/\.|#/g, '').trim();
+        }
+
         let styles = (JSONResult[selector] = JSONResult[selector] || {});
 
         let declarationsToAdd = [];
@@ -187,6 +198,6 @@ export default class ReactNativeCss {
         }
       }
     }
-    return JSONResult
+    return useInheritance ? inheritance(JSONResult) : JSONResult
   }
 }

@@ -18,9 +18,13 @@ var _toCamelCase = require('to-camel-case');
 
 var _toCamelCase2 = _interopRequireDefault(_toCamelCase);
 
-var _utilsJs = require('./utils.js');
+var _utils = require('./utils');
 
-var _utilsJs2 = _interopRequireDefault(_utilsJs);
+var _utils2 = _interopRequireDefault(_utils);
+
+var _inheritance = require('./inheritance');
+
+var _inheritance2 = _interopRequireDefault(_inheritance);
 
 var ReactNativeCss = (function () {
   function ReactNativeCss() {
@@ -29,15 +33,20 @@ var ReactNativeCss = (function () {
 
   _createClass(ReactNativeCss, [{
     key: 'parse',
-    value: function parse(input, output, prettyPrint, literalObject, cb) {
+    value: function parse(input, output, prettyPrint, literalObject, useInheritance, cb) {
       if (output === undefined) output = './style.js';
       if (prettyPrint === undefined) prettyPrint = false;
+      if (literalObject === undefined) literalObject = false;
 
       var _this = this;
 
-      if (literalObject === undefined) literalObject = false;
+      if (useInheritance === undefined) useInheritance = false;
 
-      if (_utilsJs2['default'].contains(input, /scss/)) {
+      if (typeof useInheritance === 'function') {
+        cb = useInheritance;
+        useInheritance = false;
+      }
+      if (_utils2['default'].contains(input, /scss/)) {
         var _require$renderSync = require('node-sass').renderSync({
           file: input,
           outputStyle: 'compressed'
@@ -45,20 +54,20 @@ var ReactNativeCss = (function () {
 
         var css = _require$renderSync.css;
 
-        var styleSheet = this.toJSS(css.toString());
-        _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
+        var styleSheet = this.toJSS(css.toString(), useInheritance);
+        _utils2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
 
         if (cb) {
           cb(styleSheet);
         }
       } else {
-        _utilsJs2['default'].readFile(input, function (err, data) {
+        _utils2['default'].readFile(input, function (err, data) {
           if (err) {
             console.error(err);
             process.exit();
           }
-          var styleSheet = _this.toJSS(data);
-          _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
+          var styleSheet = _this.toJSS(data, useInheritance);
+          _utils2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
 
           if (cb) {
             cb(styleSheet);
@@ -69,9 +78,11 @@ var ReactNativeCss = (function () {
   }, {
     key: 'toJSS',
     value: function toJSS(stylesheetString) {
+      var useInheritance = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
       var directions = ['top', 'right', 'bottom', 'left'];
       var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
-      var numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
+      var numberize = _utils2['default'].filterArray(['width', 'height', 'font-size', 'line-height'].concat(directions), useInheritance ? _inheritance.numeric : []);
       //special properties and shorthands that need to be broken down separately
       var specialProperties = {};
       ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(function (name) {
@@ -85,6 +96,13 @@ var ReactNativeCss = (function () {
         };
       });
 
+      directions.forEach(function (dir) {
+        numberize.push('border-' + dir + '-width');
+        changeArr.forEach(function (prop) {
+          numberize.push(prop + '-' + dir);
+        });
+      });
+
       //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
       var directionMaps = {
         'border-radius': {
@@ -95,17 +113,7 @@ var ReactNativeCss = (function () {
         }
       };
 
-      directions.forEach(function (dir) {
-        numberize.push('border-' + dir + '-width');
-        changeArr.forEach(function (prop) {
-          numberize.push(prop + '-' + dir);
-        });
-      });
-
-
-
-      //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and
-      // border-radius
+      //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
       function directionToPropertyName(property, direction) {
         var names = property.split('-');
         names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
@@ -113,11 +121,10 @@ var ReactNativeCss = (function () {
       }
 
       // CSS properties that are not supported by React Native
-      // The list of supported properties is at
-      // https://facebook.github.io/react-native/docs/style.html#supported-properties
+      // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
       var unsupported = ['display'];
 
-      var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
+      var _ParseCSS = (0, _cssParse2['default'])(_utils2['default'].clean(stylesheetString));
 
       var stylesheet = _ParseCSS.stylesheet;
 
@@ -131,9 +138,7 @@ var ReactNativeCss = (function () {
         for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var rule = _step.value;
 
-          if (rule.type !== 'rule') {
-            continue;
-          }
+          if (rule.type !== 'rule') continue;
 
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
@@ -143,7 +148,10 @@ var ReactNativeCss = (function () {
             var _loop = function () {
               var selector = _step2.value;
 
-              selector = selector.replace(/\.|#/g, '');
+              if (useInheritance) {} else {
+                selector = selector.replace(/\.|#/g, '').trim();
+              }
+
               var styles = JSONResult[selector] = JSONResult[selector] || {};
 
               var declarationsToAdd = [];
@@ -156,9 +164,7 @@ var ReactNativeCss = (function () {
                 var _loop2 = function () {
                   var declaration = _step3.value;
 
-                  if (declaration.type !== 'declaration') {
-                    return 'continue';
-                  }
+                  if (declaration.type !== 'declaration') return 'continue';
 
                   var value = declaration.value;
                   var property = declaration.property;
@@ -184,15 +190,13 @@ var ReactNativeCss = (function () {
                     }
                   }
 
-                  if (_utilsJs2['default'].arrayContains(property, unsupported)) {
-                    return 'continue';
-                  }
+                  if (_utils2['default'].arrayContains(property, unsupported)) return 'continue';
 
-                  if (_utilsJs2['default'].arrayContains(property, numberize)) {
+                  if (_utils2['default'].arrayContains(property, numberize)) {
                     value = value.replace(/px|\s*/g, '');
 
                     styles[(0, _toCamelCase2['default'])(property)] = parseFloat(value);
-                  } else if (_utilsJs2['default'].arrayContains(property, changeArr)) {
+                  } else if (_utils2['default'].arrayContains(property, changeArr)) {
                     baseDeclaration = {
                       type: 'description'
                     };
@@ -329,7 +333,7 @@ var ReactNativeCss = (function () {
         }
       }
 
-      return JSONResult;
+      return useInheritance ? (0, _inheritance2['default'])(JSONResult) : JSONResult;
     }
   }]);
 

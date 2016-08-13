@@ -30,6 +30,13 @@ var Utils = (function () {
       return false;
     }
   }, {
+    key: "filterArray",
+    value: function filterArray(targetArray, excludeArray) {
+      return targetArray.filter(function (value) {
+        return excludeArray.indexOf(value) === -1;
+      });
+    }
+  }, {
     key: "clean",
     value: function clean(string) {
       return string.replace(/\r?\n|\r/g, "");

@@ -11,6 +11,10 @@ export default class Utils {
     return false;
   }
 
+  static filterArray(targetArray, excludeArray) {
+    return targetArray.filter(value=>excludeArray.indexOf(value) === -1)
+  }
+
   static clean(string) {
     return string.replace(/\r?\n|\r/g, "");
   }
