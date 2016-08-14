@@ -28,30 +28,16 @@ function normalizeClassNames(classNames) {
   return classes;
 }
 
-/**
- * This takes an array of components and adds position properties for leveraging :first-child, :last-child,
- * :nth-child(1...n) selectors.  Without these properties, those selectors will fail.
- * Passing a single component will result in first,last and nth(1) all succeeding.
- * A key is automatically added (just the index) if omitted, which allows easily adding this to static children.
- * @param {[Component]|Component} componentOrComponentArray
- * @return {*}
- */
-function map(componentOrComponentArray) {
-  componentOrComponentArray = (componentOrComponentArray instanceof Array ? componentOrComponentArray : [componentOrComponentArray]);
-  if (isWebApp) {
-    //css pseudo already supported in the browser
-    return componentOrComponentArray;
+function indexOf(instance, children) {
+  let index = 0
+  for (let key in children) {
+    if (children[key]._mountOrder === instance._reactInternalInstance._mountOrder) {
+      return index;
+    }
+    index++
   }
-  return componentOrComponentArray.map((component, i)=> {
-    return React.cloneElement(component, {
-      firstChild: i === 0,
-      lastChild: i === componentOrComponentArray.length - 1,
-      nthChild: i + 1,
-      key: i
-    });
-  });
+  return -1
 }
-
 
 const pathCache = {};
 
@@ -119,8 +105,8 @@ export default function wrap(name, WrappedComponent) {
       this._root && this._root.setNativeProps(nativeProps);
     }
 
-    shouldComponentUpdate() {
-      return false;
+    shouldComponentUpdate(nextProps) {
+      return shallowCompare(this, nextProps);
     }
 
     /**
@@ -128,14 +114,21 @@ export default function wrap(name, WrappedComponent) {
      * @param props
      */
     createPath(props) {
+      let index = -1,
+          count = 1
+      if (this._reactInternalInstance) {
+        let children = this._reactInternalInstance._hostParent._renderedChildren
+        count = Object.keys(children).length
+        index = indexOf(this, children)
+      }
       let element = {
         e: name.toLowerCase(),
         c: normalizeClassNames(props.className),
         //Maybe in the future, but is it worth the performance hit?
 //        p: props,
-        i: props.nthChild || -1,
-        f: props.firstChild || false,
-        l: props.lastChild || false
+        i: index,
+        f: index === 0,
+        l: count === index + 1
       };
       let key = `${this.context.cssPathKey || ""}>${element.e}.${element.c.join(".")}:${element.i || ""}:${element.f || ""}:${element.l || ""}`;
       if (this.cssPathKey !== key) {
@@ -148,8 +141,7 @@ export default function wrap(name, WrappedComponent) {
     }
 
     render() {
-      let props = {ref: ref=>this._root = ref, style: this.styles};
-      return <WrappedComponent {...props} {...this.props}/>;
+      return <WrappedComponent {...this.props} ref={ref=>this._root = ref} style={[this.styles,this.props.style]}/>;
     }
   };
 
@@ -164,5 +156,3 @@ export default function wrap(name, WrappedComponent) {
   StyledComponent.contextTypes = {cssPath: React.PropTypes.array, cssPathKey: React.PropTypes.string};
   return StyledComponent;
 }
-
-export {map};
