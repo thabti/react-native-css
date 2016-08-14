@@ -116,7 +116,7 @@ export default function wrap(name, WrappedComponent) {
     createPath(props) {
       let index = -1,
           count = 1
-      if (this._reactInternalInstance) {
+      if (this._reactInternalInstance && this._reactInternalInstance._hostParent) {
         let children = this._reactInternalInstance._hostParent._renderedChildren
         count = Object.keys(children).length
         index = indexOf(this, children)
@@ -141,7 +141,8 @@ export default function wrap(name, WrappedComponent) {
     }
 
     render() {
-      return <WrappedComponent {...this.props} ref={ref=>this._root = ref} style={[this.styles,this.props.style]}/>;
+      return <WrappedComponent {...this.props} ref={ref=>this._root = ref}
+                                               style={this.props.style?[this.styles,this.props.style]:this.styles}/>;
     }
   };
 
