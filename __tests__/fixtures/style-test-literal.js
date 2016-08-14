@@ -1,0 +1,1 @@
+module.exports = {"maincontainer":{"flex":1,"justifyContent":"center","alignItems":"center","backgroundColor":"#F5FCFF"},"rootcontainer":{"flex":1,"fontSize":18}}

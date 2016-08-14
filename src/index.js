@@ -5,15 +5,7 @@ import inheritance,{numeric} from './inheritance';
 
 export default class ReactNativeCss {
 
-  constructor() {
-
-  }
-
-  parse(input, output = './style.js', prettyPrint = false, literalObject = false, useInheritance = false, cb) {
-    if(typeof useInheritance === 'function'){
-      cb = useInheritance
-      useInheritance = false
-    }
+  async parse(input, output = './style.js', prettyPrint = false, literalObject = false, useInheritance = false) {
     if(utils.contains(input, /scss/)) {
 
       let {css} = require('node-sass').renderSync({
@@ -22,25 +14,20 @@ export default class ReactNativeCss {
       });
 
       let styleSheet = this.toJSS(css.toString(),useInheritance);
-      utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-
-      if(cb) {
-        cb(styleSheet);
-      }
+      if(output)
+        utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
+      return styleSheet;
 
     } else {
-      utils.readFile(input, (err, data) => {
+      return await new Promise((resolve,reject)=>utils.readFile(input, (err, data) => {
         if (err) {
-          console.error(err);
-          process.exit();
+          return reject(err);
         }
         let styleSheet = this.toJSS(data,useInheritance);
-        utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-
-        if(cb) {
-          cb(styleSheet);
-        }
-      });
+        if(output)
+          utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
+        resolve(styleSheet);
+      }));
     }
   }
 
@@ -58,14 +45,14 @@ export default class ReactNativeCss {
           3: name == 'border' ? `${name}-style` : null,
           4: `${name}-color`
         }
-      }
+      };
     });
 
     directions.forEach((dir) => {
       numberize.push(`border-${dir}-width`);
       changeArr.forEach((prop) => {
         numberize.push(`${prop}-${dir}`);
-      })
+      });
     });
 
     //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
@@ -97,15 +84,11 @@ export default class ReactNativeCss {
       if (rule.type !== 'rule') continue;
 
       for (let selector of rule.selectors) {
-        if (useInheritance) {
-
-        } else {
+        if (!useInheritance) {
           selector = selector.replace(/\.|#/g, '').trim();
         }
 
         let styles = (JSONResult[selector] = JSONResult[selector] || {});
-
-        let declarationsToAdd = [];
 
         for (let declaration of rule.declarations) {
 
@@ -116,10 +99,10 @@ export default class ReactNativeCss {
 
           if (specialProperties[property]) {
             let special = specialProperties[property],
-                matches = special.regex.exec(value)
+              matches = special.regex.exec(value);
             if (matches) {
               if (typeof special.map === 'function') {
-                special.map(matches, styles, rule.declarations)
+                special.map(matches, styles, rule.declarations);
               } else {
                 for (let key in special.map) {
                   if (matches[key] && special.map[key]) {
@@ -127,7 +110,7 @@ export default class ReactNativeCss {
                       property: special.map[key],
                       value: matches[key],
                       type: 'declaration'
-                    })
+                    });
                   }
                 }
               }
@@ -138,14 +121,10 @@ export default class ReactNativeCss {
           if (utils.arrayContains(property, unsupported)) continue;
 
           if (utils.arrayContains(property, numberize)) {
-            var value = value.replace(/px|\s*/g, '');
-            styles[toCamelCase(property)] = parseFloat(value);
+            styles[toCamelCase(property)] = parseFloat(value.replace(/px|\s*/g, ''));
           }
 
           else if (utils.arrayContains(property, changeArr)) {
-            var baseDeclaration = {
-              type: 'description'
-            };
 
             var values = value.replace(/px/g, '').split(/[\s,]+/);
 
@@ -157,7 +136,7 @@ export default class ReactNativeCss {
 
             if (length === 1) {
 
-              styles[toCamelCase(property)] = values[0]
+              styles[toCamelCase(property)] = values[0];
 
             }
 
@@ -198,6 +177,6 @@ export default class ReactNativeCss {
         }
       }
     }
-    return useInheritance ? inheritance(JSONResult) : JSONResult
+    return useInheritance ? inheritance(JSONResult) : JSONResult;
   }
 }

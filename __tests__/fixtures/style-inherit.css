@@ -2,8 +2,12 @@
   color: black;
 }
 
-.test view.direct>text.hello:not(.direct) {
+.test view.direct > text.hello:not(.direct) {
   color: blue;
+}
+
+.test view.direct > text.hello {
+  font-size: 16px;
 }
 
 text {

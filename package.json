@@ -6,7 +6,8 @@
   "scripts": {
     "start": "babel src --out-dir build",
     "test2": "npm start && node ./test/index.test.js",
-    "test": "babel-tap test/*.test.js"
+    "test": "jest",
+    "lint": "eslint src"
   },
   "author": "Sabeur Thabti",
   "license": "MIT",
@@ -19,16 +20,32 @@
     "minimist": "^1.1.1",
     "node-sass": "^3.3.2",
     "npm-web-api": "^0.1.1",
-    "react": "^15.2.1",
+    "react": "~15.2.1",
     "react-native": "^0.31.0",
     "request": "^2.67.0",
     "to-camel-case": "~1.0.0"
   },
   "devDependencies": {
-    "babel": "^6.5.2",
-    "babel-tap": "^5.0.0",
-    "expect": "^1.14.0",
-    "tap": "^6.3.2"
+    "babel-cli": "^6.11.0",
+    "babel-eslint": "^6.1.2",
+    "babel-jest": "^14.1.0",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-react-native": "^1.9.0",
+    "eslint": "^3.3.0",
+    "eslint-plugin-react": "^6.0.0",
+    "jest-cli": "^14.1.0",
+    "jest-react-native": "^14.1.2",
+    "react-test-renderer": "^15.3.0"
+  },
+  "jest": {
+    "preset": "jest-react-native",
+    "unmockedModulePathPatterns": [
+      "src/"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/fixtures/"
+    ]
   },
   "repository": {
     "type": "git",

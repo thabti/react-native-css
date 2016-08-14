@@ -1,18 +1,17 @@
-import fs from 'fs';
-
+import fs from "fs";
 export default class Utils {
 
   static arrayContains(value, arr) {
     for (var i = 0; i < arr.length; i++) {
       if (value === arr[i]) {
-        return true
+        return true;
       }
     }
     return false;
   }
 
   static filterArray(targetArray, excludeArray) {
-    return targetArray.filter(value=>excludeArray.indexOf(value) === -1)
+    return targetArray.filter(value=>excludeArray.indexOf(value) === -1);
   }
 
   static clean(string) {
@@ -29,7 +28,8 @@ export default class Utils {
     var output = "module.exports = ";
     output += (literalObject) ? `${jsonOutput}` : `require('react-native').StyleSheet.create(${jsonOutput});`;
     // Write to file
-    fs.writeFileSync(outputFile, output);
+    if(outputFile)
+      fs.writeFileSync(outputFile, output);
     return output;
   }
 

@@ -1,344 +1,181 @@
-'use strict';
+Object.defineProperty(exports,"__esModule",{value:true});var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _cssParse=require('css-parse');var _cssParse2=_interopRequireDefault(_cssParse);
+var _toCamelCase=require('to-camel-case');var _toCamelCase2=_interopRequireDefault(_toCamelCase);
+var _utils=require('./utils');var _utils2=_interopRequireDefault(_utils);
+var _inheritance=require('./inheritance');var _inheritance2=_interopRequireDefault(_inheritance);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
 
-Object.defineProperty(exports, '__esModule', {
-  value: true
+ReactNativeCss=function(){function ReactNativeCss(){_classCallCheck(this,ReactNativeCss);}_createClass(ReactNativeCss,[{key:'parse',value:function parse(
+
+input){var output=arguments.length<=1||arguments[1]===undefined?'./style.js':arguments[1];var prettyPrint=arguments.length<=2||arguments[2]===undefined?false:arguments[2];var _this=this;var literalObject=arguments.length<=3||arguments[3]===undefined?false:arguments[3];var useInheritance=arguments.length<=4||arguments[4]===undefined?false:arguments[4];var _require$renderSync,css,styleSheet;return regeneratorRuntime.async(function parse$(_context){while(1){switch(_context.prev=_context.next){case 0:if(!
+_utils2.default.contains(input,/scss/)){_context.next=8;break;}_require$renderSync=
+
+require('node-sass').renderSync({
+file:input,
+outputStyle:'compressed'});css=_require$renderSync.css;
+
+
+styleSheet=this.toJSS(css.toString(),useInheritance);
+if(output)
+_utils2.default.outputReactFriendlyStyle(styleSheet,output,prettyPrint,literalObject);return _context.abrupt('return',
+styleSheet);case 8:_context.next=10;return regeneratorRuntime.awrap(
+
+
+new Promise(function(resolve,reject){return _utils2.default.readFile(input,function(err,data){
+if(err){
+return reject(err);
+}
+var styleSheet=_this.toJSS(data,useInheritance);
+if(output)
+_utils2.default.outputReactFriendlyStyle(styleSheet,output,prettyPrint,literalObject);
+resolve(styleSheet);
+});}));case 10:return _context.abrupt('return',_context.sent);case 11:case'end':return _context.stop();}}},null,this);}},{key:'toJSS',value:function toJSS(
+
+
+
+stylesheetString){var useInheritance=arguments.length<=1||arguments[1]===undefined?false:arguments[1];
+var directions=['top','right','bottom','left'];
+var changeArr=['margin','padding','border-width','border-radius'];
+var numberize=_utils2.default.filterArray(['width','height','font-size','line-height'].concat(directions),useInheritance?_inheritance.numeric:[]);
+//special properties and shorthands that need to be broken down separately
+var specialProperties={};
+['border','border-top','border-right','border-bottom','border-left'].forEach(function(name){
+specialProperties[name]={
+regex:/^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
+map:{
+1:name+'-width',
+3:name=='border'?name+'-style':null,
+4:name+'-color'}};
+
+
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-var _cssParse = require('css-parse');
-
-var _cssParse2 = _interopRequireDefault(_cssParse);
-
-var _toCamelCase = require('to-camel-case');
-
-var _toCamelCase2 = _interopRequireDefault(_toCamelCase);
-
-var _utils = require('./utils');
-
-var _utils2 = _interopRequireDefault(_utils);
-
-var _inheritance = require('./inheritance');
-
-var _inheritance2 = _interopRequireDefault(_inheritance);
-
-var ReactNativeCss = (function () {
-  function ReactNativeCss() {
-    _classCallCheck(this, ReactNativeCss);
-  }
-
-  _createClass(ReactNativeCss, [{
-    key: 'parse',
-    value: function parse(input, output, prettyPrint, literalObject, useInheritance, cb) {
-      if (output === undefined) output = './style.js';
-      if (prettyPrint === undefined) prettyPrint = false;
-      if (literalObject === undefined) literalObject = false;
-
-      var _this = this;
-
-      if (useInheritance === undefined) useInheritance = false;
-
-      if (typeof useInheritance === 'function') {
-        cb = useInheritance;
-        useInheritance = false;
-      }
-      if (_utils2['default'].contains(input, /scss/)) {
-        var _require$renderSync = require('node-sass').renderSync({
-          file: input,
-          outputStyle: 'compressed'
-        });
-
-        var css = _require$renderSync.css;
-
-        var styleSheet = this.toJSS(css.toString(), useInheritance);
-        _utils2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-
-        if (cb) {
-          cb(styleSheet);
-        }
-      } else {
-        _utils2['default'].readFile(input, function (err, data) {
-          if (err) {
-            console.error(err);
-            process.exit();
-          }
-          var styleSheet = _this.toJSS(data, useInheritance);
-          _utils2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-
-          if (cb) {
-            cb(styleSheet);
-          }
-        });
-      }
-    }
-  }, {
-    key: 'toJSS',
-    value: function toJSS(stylesheetString) {
-      var useInheritance = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-
-      var directions = ['top', 'right', 'bottom', 'left'];
-      var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
-      var numberize = _utils2['default'].filterArray(['width', 'height', 'font-size', 'line-height'].concat(directions), useInheritance ? _inheritance.numeric : []);
-      //special properties and shorthands that need to be broken down separately
-      var specialProperties = {};
-      ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(function (name) {
-        specialProperties[name] = {
-          regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
-          map: {
-            1: name + '-width',
-            3: name == 'border' ? name + '-style' : null,
-            4: name + '-color'
-          }
-        };
-      });
-
-      directions.forEach(function (dir) {
-        numberize.push('border-' + dir + '-width');
-        changeArr.forEach(function (prop) {
-          numberize.push(prop + '-' + dir);
-        });
-      });
-
-      //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
-      var directionMaps = {
-        'border-radius': {
-          'Top': 'top-left',
-          'Right': 'top-right',
-          'Bottom': 'bottom-right',
-          'Left': 'bottom-left'
-        }
-      };
-
-      //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
-      function directionToPropertyName(property, direction) {
-        var names = property.split('-');
-        names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
-        return (0, _toCamelCase2['default'])(names.join('-'));
-      }
-
-      // CSS properties that are not supported by React Native
-      // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
-      var unsupported = ['display'];
-
-      var _ParseCSS = (0, _cssParse2['default'])(_utils2['default'].clean(stylesheetString));
-
-      var stylesheet = _ParseCSS.stylesheet;
-
-      var JSONResult = {};
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var rule = _step.value;
-
-          if (rule.type !== 'rule') continue;
-
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
-
-          try {
-            var _loop = function () {
-              var selector = _step2.value;
-
-              if (useInheritance) {} else {
-                selector = selector.replace(/\.|#/g, '').trim();
-              }
-
-              var styles = JSONResult[selector] = JSONResult[selector] || {};
-
-              var declarationsToAdd = [];
-
-              _iteratorNormalCompletion3 = true;
-              _didIteratorError3 = false;
-              _iteratorError3 = undefined;
-
-              try {
-                var _loop2 = function () {
-                  var declaration = _step3.value;
-
-                  if (declaration.type !== 'declaration') return 'continue';
-
-                  var value = declaration.value;
-                  var property = declaration.property;
-
-                  if (specialProperties[property]) {
-                    var special = specialProperties[property],
-                        matches = special.regex.exec(value);
-                    if (matches) {
-                      if (typeof special.map === 'function') {
-                        special.map(matches, styles, rule.declarations);
-                      } else {
-                        for (var key in special.map) {
-                          if (matches[key] && special.map[key]) {
-                            rule.declarations.push({
-                              property: special.map[key],
-                              value: matches[key],
-                              type: 'declaration'
-                            });
-                          }
-                        }
-                      }
-                      return 'continue';
-                    }
-                  }
-
-                  if (_utils2['default'].arrayContains(property, unsupported)) return 'continue';
-
-                  if (_utils2['default'].arrayContains(property, numberize)) {
-                    value = value.replace(/px|\s*/g, '');
-
-                    styles[(0, _toCamelCase2['default'])(property)] = parseFloat(value);
-                  } else if (_utils2['default'].arrayContains(property, changeArr)) {
-                    baseDeclaration = {
-                      type: 'description'
-                    };
-                    values = value.replace(/px/g, '').split(/[\s,]+/);
-
-                    values.forEach(function (value, index, arr) {
-                      arr[index] = parseInt(value);
-                    });
-
-                    length = values.length;
-
-                    if (length === 1) {
-
-                      styles[(0, _toCamelCase2['default'])(property)] = values[0];
-                    }
-
-                    if (length === 2) {
-                      _arr = ['Top', 'Bottom'];
-
-                      for (_i = 0; _i < _arr.length; _i++) {
-                        var prop = _arr[_i];
-                        styles[directionToPropertyName(property, prop)] = values[0];
-                      }
-
-                      _arr2 = ['Left', 'Right'];
-                      for (_i2 = 0; _i2 < _arr2.length; _i2++) {
-                        var prop = _arr2[_i2];
-                        styles[directionToPropertyName(property, prop)] = values[1];
-                      }
-                    }
-
-                    if (length === 3) {
-                      _arr3 = ['Left', 'Right'];
-
-                      for (_i3 = 0; _i3 < _arr3.length; _i3++) {
-                        var prop = _arr3[_i3];
-                        styles[directionToPropertyName(property, prop)] = values[1];
-                      }
-
-                      styles[directionToPropertyName(property, 'Top')] = values[0];
-                      styles[directionToPropertyName(property, 'Bottom')] = values[2];
-                    }
-
-                    if (length === 4) {
-                      ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-                        styles[directionToPropertyName(property, prop)] = values[index];
-                      });
-                    }
-                  } else {
-                    if (!isNaN(declaration.value) && property !== 'font-weight') {
-                      declaration.value = parseFloat(declaration.value);
-                    }
-
-                    styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
-                  }
-                };
-
-                for (_iterator3 = rule.declarations[Symbol.iterator](); !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                  var _ret2 = _loop2();
-
-                  if (_ret2 === 'continue') continue;
-                }
-              } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-              } finally {
-                try {
-                  if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-                    _iterator3['return']();
-                  }
-                } finally {
-                  if (_didIteratorError3) {
-                    throw _iteratorError3;
-                  }
-                }
-              }
-            };
-
-            for (var _iterator2 = rule.selectors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var _iteratorNormalCompletion3;
-
-              var _didIteratorError3;
-
-              var _iteratorError3;
-
-              var _iterator3, _step3;
-
-              var value;
-              var baseDeclaration;
-              var values;
-              var length;
-
-              var _arr;
-
-              var _i;
-
-              var _arr2;
-
-              var _i2;
-
-              var _arr3;
-
-              var _i3;
-
-              _loop();
-            }
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                _iterator2['return']();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
-          }
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator['return']) {
-            _iterator['return']();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      return useInheritance ? (0, _inheritance2['default'])(JSONResult) : JSONResult;
-    }
-  }]);
-
-  return ReactNativeCss;
-})();
-
-exports['default'] = ReactNativeCss;
-module.exports = exports['default'];
+directions.forEach(function(dir){
+numberize.push('border-'+dir+'-width');
+changeArr.forEach(function(prop){
+numberize.push(prop+'-'+dir);
+});
+});
+
+//map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
+var directionMaps={
+'border-radius':{
+'Top':'top-left',
+'Right':'top-right',
+'Bottom':'bottom-right',
+'Left':'bottom-left'}};
+
+
+
+//Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
+function directionToPropertyName(property,direction){
+var names=property.split('-');
+names.splice(1,0,directionMaps[property]?directionMaps[property][direction]:direction);
+return(0,_toCamelCase2.default)(names.join('-'));
+}
+
+// CSS properties that are not supported by React Native
+// The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
+var unsupported=['display'];var _ParseCSS=
+
+(0,_cssParse2.default)(_utils2.default.clean(stylesheetString));var stylesheet=_ParseCSS.stylesheet;
+
+var JSONResult={};
+
+for(var _iterator=stylesheet.rules,_isArray=Array.isArray(_iterator),_i=0,_iterator=_isArray?_iterator:_iterator[typeof Symbol==='function'?Symbol.iterator:'@@iterator']();;){var _ref;if(_isArray){if(_i>=_iterator.length)break;_ref=_iterator[_i++];}else{_i=_iterator.next();if(_i.done)break;_ref=_i.value;}var rule=_ref;
+if(rule.type!=='rule')continue;var _loop=function _loop(_selector){
+
+
+if(!useInheritance){
+_selector=_selector.replace(/\.|#/g,'').trim();
+}
+
+var styles=JSONResult[_selector]=JSONResult[_selector]||{};var _loop2=function _loop2(
+
+declaration){
+
+if(declaration.type!=='declaration')return'continue';
+
+var value=declaration.value;
+var property=declaration.property;
+
+if(specialProperties[property]){
+var special=specialProperties[property],
+matches=special.regex.exec(value);
+if(matches){
+if(typeof special.map==='function'){
+special.map(matches,styles,rule.declarations);
+}else{
+for(var key in special.map){
+if(matches[key]&&special.map[key]){
+rule.declarations.push({
+property:special.map[key],
+value:matches[key],
+type:'declaration'});
+
+}
+}
+}
+return'continue';
+}
+}
+
+if(_utils2.default.arrayContains(property,unsupported))return'continue';
+
+if(_utils2.default.arrayContains(property,numberize)){
+styles[(0,_toCamelCase2.default)(property)]=parseFloat(value.replace(/px|\s*/g,''));
+}else
+
+if(_utils2.default.arrayContains(property,changeArr)){
+
+values=value.replace(/px/g,'').split(/[\s,]+/);
+
+values.forEach(function(value,index,arr){
+arr[index]=parseInt(value);
+});
+
+length=values.length;
+
+if(length===1){
+
+styles[(0,_toCamelCase2.default)(property)]=values[0];
+
+}
+
+if(length===2){var _arr=
+
+['Top','Bottom'];for(var _i4=0;_i4<_arr.length;_i4++){var prop=_arr[_i4];
+styles[directionToPropertyName(property,prop)]=values[0];
+}var _arr2=
+
+['Left','Right'];for(var _i5=0;_i5<_arr2.length;_i5++){var _prop=_arr2[_i5];
+styles[directionToPropertyName(property,_prop)]=values[1];
+}
+}
+
+if(length===3){var _arr3=
+
+['Left','Right'];for(var _i6=0;_i6<_arr3.length;_i6++){var _prop2=_arr3[_i6];
+styles[directionToPropertyName(property,_prop2)]=values[1];
+}
+
+styles[directionToPropertyName(property,'Top')]=values[0];
+styles[directionToPropertyName(property,'Bottom')]=values[2];
+}
+
+if(length===4){
+['Top','Right','Bottom','Left'].forEach(function(prop,index){
+styles[directionToPropertyName(property,prop)]=values[index];
+});
+}
+}else
+{
+if(!isNaN(declaration.value)&&property!=='font-weight'){
+declaration.value=parseFloat(declaration.value);
+}
+
+styles[(0,_toCamelCase2.default)(property)]=declaration.value;
+}};for(var _iterator3=rule.declarations,_isArray3=Array.isArray(_iterator3),_i3=0,_iterator3=_isArray3?_iterator3:_iterator3[typeof Symbol==='function'?Symbol.iterator:'@@iterator']();;){var _ref3;if(_isArray3){if(_i3>=_iterator3.length)break;_ref3=_iterator3[_i3++];}else{_i3=_iterator3.next();if(_i3.done)break;_ref3=_i3.value;}var declaration=_ref3;var _ret2=_loop2(declaration);if(_ret2==='continue')continue;
+}selector=_selector;};for(var _iterator2=rule.selectors,_isArray2=Array.isArray(_iterator2),_i2=0,_iterator2=_isArray2?_iterator2:_iterator2[typeof Symbol==='function'?Symbol.iterator:'@@iterator']();;){var _ref2;if(_isArray2){if(_i2>=_iterator2.length)break;_ref2=_iterator2[_i2++];}else{_i2=_iterator2.next();if(_i2.done)break;_ref2=_i2.value;}var selector=_ref2;var values;var length;_loop(selector);
+}
+}
+return useInheritance?(0,_inheritance2.default)(JSONResult):JSONResult;
+}}]);return ReactNativeCss;}();exports.default=ReactNativeCss;

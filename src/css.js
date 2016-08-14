@@ -1,14 +1,14 @@
-import {StyleSheet} from 'react-native'
+import {StyleSheet} from "react-native";
 //The flattened reference object of all the styles. Note that since all styles are passed via StyleSheet.create
 // references, duplicate selectors replace previous ones instead of merging.  This is a major difference from standard
 // CSS behavior.
 let styles     = {},
     //This is an object containing all the rules in the styles sheets for matching against
-    ruleKeys   = {},
+  ruleKeys   = {},
     //This is all the sheets, which is maintained for allowing unregister to work.
-    sheets     = [],
+  sheets     = [],
     //Cache for matching styles against a given path.
-    styleCache = {};
+  styleCache = {};
 /**
  // Format of ruleKeys
  ruleKeys = {
@@ -50,10 +50,10 @@ const pseudos = [
   {
     regex: /^not\(([a-z0-9\-\._]+)\)$/i,
     match: (matches, element)=> {
-      return matches[1].split('.').filter(a=>a).every(className=>element.c.indexOf(className) === -1)
+      return matches[1].split(".").filter(a=>a).every(className=>element.c.indexOf(className) === -1);
     }
   }
-]
+];
 /**
  * Takes the flattened style sheet and creates the rules based on the selector declarations.  This is automatically
  * called by flattenSheets.
@@ -61,56 +61,59 @@ const pseudos = [
  * @return {ruleKeys}
  */
 function createRules(styles) {
-  let rules = {}
+  let rules = {};
   //root view>text.hello text
   Object.keys(styles).forEach((key, o)=> {
-    let path = []
-    key.replace(/\s*>\s*/g, '>').replace(/\s+/g, ' ').split(' ').forEach(part=> {
-      let immediates = part.split('>')
+    if (key.endsWith("&inherited")) {
+      return;
+    }
+    let path = [];
+    key.replace(/\s*>\s*/g, ">").replace(/\s+/g, " ").split(" ").forEach(part=> {
+      let immediates = part.split(">");
       immediates.forEach((immediate, i)=> {
-        let pseudo  = immediate.split(':'),
-            normal  = pseudo.shift(),
-            classes = normal.split('.').filter(a=>a),
-            element = normal.charAt(0) === '.' ? '*' : classes.shift()
+        let pseudo  = immediate.split(":"),
+          normal  = pseudo.shift(),
+          classes = normal.split(".").filter(a=>a),
+          element = normal.charAt(0) === "." ? "*" : classes.shift();
         //prep pseudo functions
-        pseudo = pseudo.map(pseudo=>pseudos.find(test=> test.regex.exec(pseudo))).map(test=> {
-          let matches = test.regex.exec(pseudo)
+        pseudo = pseudo.map(pseudo=>pseudos.find(test=> test.regex.exec(pseudo))).filter(test=>test).map(test=> {
+          let matches = test.regex.exec(pseudo);
           if (matches) {
-            return test.match.bind(null, matches)
+            return test.match.bind(null, matches);
           }
-        }).filter(ps=>ps)
+        }).filter(ps=>ps);
 
         path.push({
           e: element,
           c: classes,
           ps: pseudo.length && pseudo,
           i: immediates.length > 0 && i != immediates.length - 1
-        })
-      })
-    })
-    path = path.reverse()
-    let first = path.shift()
+        });
+      });
+    });
+    path = path.reverse();
+    let first = path.shift();
     //Calculate specificity
-    let specificity = 0
+    let specificity = 0;
     //add +10 for classes
     specificity += first.c.length * 10;
     if (path.length > 0 && path.i) {
-      specificity += 5
+      specificity += 5;
     }
-    if (first.e !== '*') {
+    if (first.e !== "*") {
       specificity++;
     }
 
     path.forEach(a=> {
-      specificity += a.c.length
+      specificity += a.c.length;
     });
 
     if (!rules[first.e]) {
-      rules[first.e] = []
+      rules[first.e] = [];
     }
-    rules[first.e].push(Object.assign({}, first, {a: path, s: specificity, o, k: key}))
-  })
-  return rules
+    rules[first.e].push(Object.assign({}, first, {a: path, s: specificity, o, k: key}));
+  });
+  return rules;
 }
 
 /**
@@ -121,13 +124,13 @@ function createRules(styles) {
  * @return {boolean}
  */
 function elementMatches(target, matching) {
-  if (target.e !== matching.e && matching.e !== '*') {
-    return false
+  if (target.e !== matching.e && matching.e !== "*") {
+    return false;
   }
   if (matching.c && !matching.c.every(className=>target.c && target.c.indexOf(className) > -1)) {
-    return false
+    return false;
   }
-  return !matching.ps || matching.ps.every(match=> match(target))
+  return !matching.ps || matching.ps.every(match=> match(target));
 }
 
 /**
@@ -138,63 +141,61 @@ function elementMatches(target, matching) {
 function matchingRules(path, key) {
   try {
     if (!key) {
-      key = JSON.stringify(path)
+      key = JSON.stringify(path);
     }
     if (styleCache[key]) {
-      return styleCache[key]
+      return styleCache[key];
     }
 
-    path = path.slice(0).reverse()
+    path = path.slice(0).reverse();
     if (!path[0]) {
-      return styleCache[key] = null
+      return styleCache[key] = null;
     }
-    let element = path[0].e,
-        classes = path[0].c
+    let element = path[0].e;
 
 
     //find matching
-    let starting = (ruleKeys[element] || []).concat(ruleKeys['*'] || [])
+    let starting = (ruleKeys[element] || []).concat(ruleKeys["*"] || []);
     let matchingStyles = starting.filter(rule=> {
       if (!elementMatches(path[0], rule)) {
-        return
+        return;
       }
-      let index = 1, lastRelative = -1
+      let index = 1, lastRelative = -1;
       return rule.a.every((ancestor, i)=> {
         main:for (; index < path.length; index++) {
           if (elementMatches(path[index], ancestor)) {
             if (!ancestor.i) {
-              lastRelative = i
+              lastRelative = i;
             }
-            index++
-            return true
+            index++;
+            return true;
           } else if (ancestor.i) {
             if (lastRelative > -1) {
               //push the path up to the next matching
-              index++
+              index++;
               let ancestors      = rule.a.slice(lastRelative, i - 1),
-                  directAncestor = ancestor.shift()
+                directAncestor = ancestor.shift();
               for (; index < path.length; index++) {
                 if (elementMatches(path[index], directAncestor)) {
-                  directAncestor = ancestors.shift()
+                  directAncestor = ancestors.shift();
                   if (!directAncestor) {
                     continue main;
                   }
                 }
               }
             }
-            return false
+            return false;
           }
         }
-      })
-    })
+      });
+    });
     //sort styles by specificity and then by order in style sheet so that the highest specificity is the last rule,
     // overwriting any previous rules
-    matchingStyles.sort((rule1, rule2)=>(rule1.s - rule2.s) || (rule1.o - rule2.o))
-    styleCache[key] = StyleSheet.flatten(matchingStyles.map(rule=>styles[rule.k + '&inherited']).concat(matchingStyles.map(rule=>styles[rule.k])).filter(rule=>rule))
-    return styleCache[key]
+    matchingStyles.sort((rule1, rule2)=>(rule1.s - rule2.s) || (rule1.o - rule2.o));
+    styleCache[key] = StyleSheet.flatten(matchingStyles.map(rule=>styles[rule.k + "&inherited"]).concat(matchingStyles.map(rule=>styles[rule.k])).filter(rule=>rule));
+    return styleCache[key];
   } catch (e) {
-    console.warn(e, path)
-    return []
+    return [];
   }
 }
 
@@ -207,17 +208,16 @@ function css(...args) {
   let first = args[0];
   return args.map(arg=> {
     if (arg instanceof Array) {
-      return matchingRules(arg)
-    } else if (typeof arg === 'string') {
-      if (arg.charAt(0) === '&') {
-        first = arg = first + '.' + arg.substr(1);
+      return matchingRules(arg);
+    } else if (typeof arg === "string") {
+      if (arg.charAt(0) === "&") {
+        first = arg = first + "." + arg.substr(1);
       }
       return [];
-//      matchingRules(arg);
     } else {
       return arg;
     }
-  })
+  });
 }
 
 /**
@@ -225,7 +225,7 @@ function css(...args) {
  */
 function flattenSheets() {
   styles = Object.assign.apply(null, [{}].concat(sheets));
-  ruleKeys = createRules(styles)
+  ruleKeys = createRules(styles);
 }
 
 /**
@@ -252,5 +252,5 @@ function unregister(...stylesheets) {
   flattenSheets();
 }
 
-export default css
-export {register,unregister,matchingRules}
+export default css;
+export {register,unregister,matchingRules};
