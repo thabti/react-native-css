@@ -1,7 +1,6 @@
 dependencies:
   pre:
-    - npm install
-    - npm install -g babel
+    - npm install --silent
 
 test:
   override:
