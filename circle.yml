@@ -1,6 +1,7 @@
 dependencies:
   pre:
-    - npm install --silent
+    - npm install -g npm
+    - npm install
 
 test:
   override:
