@@ -6,6 +6,7 @@ dependencies:
   pre:
     - npm install -g npm
     - npm install
+    - npm rebuild
 
 test:
   override:
