@@ -29,14 +29,14 @@ function normalizeClassNames(classNames) {
 }
 
 function indexOf(instance, children) {
-  let index = 0
+  let index = 0;
   for (let key in children) {
     if (children[key]._mountOrder === instance._reactInternalInstance._mountOrder) {
       return index;
     }
-    index++
+    index++;
   }
-  return -1
+  return -1;
 }
 
 const pathCache = {};
@@ -115,11 +115,11 @@ export default function wrap(name, WrappedComponent) {
      */
     createPath(props) {
       let index = -1,
-          count = 1
+        count = 1;
       if (this._reactInternalInstance && this._reactInternalInstance._hostParent) {
-        let children = this._reactInternalInstance._hostParent._renderedChildren
-        count = Object.keys(children).length
-        index = indexOf(this, children)
+        let children = this._reactInternalInstance._hostParent._renderedChildren;
+        count = Object.keys(children).length;
+        index = indexOf(this, children);
       }
       let element = {
         e: name.toLowerCase(),

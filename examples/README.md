@@ -56,8 +56,8 @@ root {
   }
 }
 
-//You need to either style a text component or specify that a selector is a // text element using the :text pseudo selector.
-.someTextClass:text {
+//You need to explicitly style a text component for text properties to apply
+text.someTextClass {
   font-size:20px;
 }
 

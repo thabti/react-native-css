@@ -19,7 +19,7 @@ return string.replace(/\r?\n|\r/g,"");
 }},{key:"readFile",value:function readFile(
 
 file,cb){
-_fs2.default.readFile(file,"utf8",cb);
+return _fs2.default.readFileSync(file,"utf8");
 }},{key:"outputReactFriendlyStyle",value:function outputReactFriendlyStyle(
 
 style,outputFile,prettyPrint,literalObject){
@@ -28,8 +28,9 @@ var jsonOutput=JSON.stringify(style,null,indentation);
 var output="module.exports = ";
 output+=literalObject?""+jsonOutput:"require('react-native').StyleSheet.create("+jsonOutput+");";
 // Write to file
-if(outputFile)
+if(outputFile){
 _fs2.default.writeFileSync(outputFile,output);
+}
 return output;
 }},{key:"contains",value:function contains(
 

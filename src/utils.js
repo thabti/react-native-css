@@ -18,8 +18,8 @@ export default class Utils {
     return string.replace(/\r?\n|\r/g, "");
   }
 
-  static readFile(file, cb) {
-    fs.readFile(file, "utf8", cb);
+  static readFile(file) {
+    return fs.readFileSync(file, "utf8");
   }
 
   static outputReactFriendlyStyle(style, outputFile, prettyPrint, literalObject) {
@@ -28,8 +28,9 @@ export default class Utils {
     var output = "module.exports = ";
     output += (literalObject) ? `${jsonOutput}` : `require('react-native').StyleSheet.create(${jsonOutput});`;
     // Write to file
-    if(outputFile)
+    if (outputFile) {
       fs.writeFileSync(outputFile, output);
+    }
     return output;
   }
 

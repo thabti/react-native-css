@@ -7,12 +7,12 @@ global.Promise = require.requireActual('promise');
 describe('React Native CSS Command-line', ()=> {
 
   it("should parse CSS", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style.css', './__tests__/fixtures/style.js', false, true);
+    let data = await css.parse({input: './__tests__/fixtures/style.css'});
     expect(data).toEqual({main: {backgroundColor: '#000'}});
   });
 
   it("shoud parse SCSS", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style.scss', './__tests__/fixtures/stylescss.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style.scss'});
     expect(data).toEqual({
       description: {
         flex: 102,
@@ -33,7 +33,7 @@ describe('React Native CSS Command-line', ()=> {
   });
 
   it("Parse SCSS error", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-20.scss', './__tests__/fixtures/stylescss-20.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style-20.scss'});
     expect(data).toEqual({
       maincontainer: {
         flex: 1,
@@ -46,7 +46,7 @@ describe('React Native CSS Command-line', ()=> {
   });
 
   it("Parse SCSS error", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-dorthwein.scss', './__tests__/fixtures/stylescss-dorthwein.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style-dorthwein.scss'});
     expect(data).toEqual({
       center: {
         alignItems: 'center',
@@ -58,12 +58,12 @@ describe('React Native CSS Command-line', ()=> {
   });
 
   it("Parse CSS and ignore unsupported property", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-unsupported.scss', './__tests__/fixtures/style-unsupported.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style-unsupported.scss'});
     expect(data).toEqual({container: {background: 'white'}});
   });
 
   it("Parse CSS and turn properties into numbers", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-number.scss', './__tests__/fixtures/style-number.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style-number.scss'});
     expect(data).toEqual({
       text: {
         fontSize: 12,
@@ -73,7 +73,7 @@ describe('React Native CSS Command-line', ()=> {
   });
 
   it("Regression test for issue #26", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-test.css', './__tests__/fixtures/style-test.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style-test.css'});
     expect(data).toEqual({
       "row": {
         "top": 50,
@@ -91,14 +91,18 @@ describe('React Native CSS Command-line', ()=> {
   });
 
   it("Argument --literal generates a javascript literal object", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-20.scss', './__tests__/fixtures/style-test-literal.js', false, true);
+    await css.parse({
+      input: './__tests__/fixtures/style-20.scss',
+      output: './__tests__/fixtures/style-test-literal.js', //actually tests the output
+      objectLiteral: true
+    });
     var styles = require('./fixtures/style-test-literal.js');
     expect(styles.maincontainer.backgroundColor).toEqual("#F5FCFF");
 
   });
 
   it("Parse CSS and expand shorthand properties", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-expand.css', './__tests__/fixtures/style-expand.js', false, false);
+    let data = await css.parse({input: './__tests__/fixtures/style-expand.css'});
     expect(data).toEqual({
       "container": {
         "paddingTop": 10,
@@ -142,8 +146,8 @@ describe('React Native CSS Command-line', ()=> {
     });
   });
 
-  it("Test inheritance CSS", async ()=> {
-    let data = await css.parse('./__tests__/fixtures/style-inherit.css', './__tests__/fixtures/style-inherit.js', false, true, true);
+  it("Test inheritance CSS", ()=> {
+    let data = css.parse({input: './__tests__/fixtures/style-inherit.css', useInheritance: true});
     register(data);
 
     expect(matchRules([{e: 'view', c: ['test']}, {e: 'view', c: ['test']}, {
