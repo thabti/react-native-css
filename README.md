@@ -11,8 +11,24 @@ Raise an issue and I will add you. After a PR.
 Global
 
 ```bash
+yarn global add react-native-css
+```
+
+```bash
 npm install react-native-css -g
 ```
+
+Local
+
+```bash
+yarn add react-native-css --dev
+```
+
+
+```bash
+npm install react-native-css --dev
+```
+
 
 # Command Line Interface
 
