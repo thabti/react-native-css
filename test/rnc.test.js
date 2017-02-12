@@ -107,3 +107,14 @@ t.test("Parse CSS and expand shorthand properties", function(t){
     t.end()
   });
 });
+
+t.test("Parse CSS and transform properties", function(t) {
+  css.parse('./test/fixtures/style-non-matching.scss', './test/fixtures/style-non-matching.js', false, false, function(data) {
+    expect(data).toEqual({ container: {
+        flex: 'unset',
+        textDecorationLine: 'none',
+    	textVerticalAlign: 'bottom'
+    } })
+    t.end();
+  });
+});

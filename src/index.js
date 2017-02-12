@@ -83,6 +83,12 @@ export default class ReactNativeCss {
     // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
     const unsupported = ['display'];
 
+    const nonMatching = {
+        'flex-grow': 'flex',
+        'text-decoration': 'textDecorationLine',
+        'vertical-align': 'textVerticalAlign'
+    };
+
     let {stylesheet} = ParseCSS(utils.clean(stylesheetString));
 
     let JSONResult = {};
@@ -125,6 +131,15 @@ export default class ReactNativeCss {
           }
 
           if (utils.arrayContains(property, unsupported)) continue;
+
+          if (nonMatching[property]) {
+              rule.declarations.push({
+                property: nonMatching[property],
+                value: value,
+                type: 'declaration'
+              })
+              continue;
+          }
 
           if (utils.arrayContains(property, numberize)) {
             var value = value.replace(/px|\s*/g, '');
