@@ -5,22 +5,20 @@ var _inheritance=require('./inheritance');var _inheritance2=_interopRequireDefau
 
 ReactNativeCss=function(){function ReactNativeCss(){_classCallCheck(this,ReactNativeCss);}_createClass(ReactNativeCss,[{key:'parse',value:function parse(_ref)
 
-{var input=_ref.input;var _ref$output=_ref.output;var output=_ref$output===undefined?'./style.js':_ref$output;var _ref$prettyPrint=_ref.prettyPrint;var prettyPrint=_ref$prettyPrint===undefined?false:_ref$prettyPrint;var _ref$literalObject=_ref.literalObject;var literalObject=_ref$literalObject===undefined?false:_ref$literalObject;var _ref$useInheritance=_ref.useInheritance;var useInheritance=_ref$useInheritance===undefined?false:_ref$useInheritance;
-console.log(input,output);
+{var input=_ref.input,output=_ref.output,_ref$prettyPrint=_ref.prettyPrint,prettyPrint=_ref$prettyPrint===undefined?false:_ref$prettyPrint,_ref$literalObject=_ref.literalObject,literalObject=_ref$literalObject===undefined?false:_ref$literalObject,_ref$useInheritance=_ref.useInheritance,useInheritance=_ref$useInheritance===undefined?false:_ref$useInheritance;
+if(!input){
+throw new Error('An input file is required.');
+}
 var data=void 0;
 if(_utils2.default.contains(input,/scss/)){var _require$renderSync=
 require('node-sass').renderSync({
 file:input,
-outputStyle:'compressed'});var css=_require$renderSync.css;
+outputStyle:'compressed'}),css=_require$renderSync.css;
 
 data=css.toString();
 }else{
-console.log('awaiting promise');
 data=_utils2.default.readFile(input);
-console.log('promise done');
 }
-
-console.log('stylesheet',data.length);
 
 var styleSheet=this.toJSS(data,useInheritance);
 if(output){
@@ -29,11 +27,11 @@ _utils2.default.outputReactFriendlyStyle(styleSheet,output,prettyPrint,literalOb
 return styleSheet;
 }},{key:'toJSS',value:function toJSS(
 
-stylesheetString){var useInheritance=arguments.length<=1||arguments[1]===undefined?false:arguments[1];
+stylesheetString){var useInheritance=arguments.length>1&&arguments[1]!==undefined?arguments[1]:false;
 var directions=['top','right','bottom','left'];
 var changeArr=['margin','padding','border-width','border-radius'];
 var numberize=_utils2.default.filterArray(['width','height','font-size','line-height'].concat(directions),useInheritance?_inheritance.numeric:[]);
-//special properties and shorthands that need to be broken down separately
+
 var specialProperties={};
 ['border','border-top','border-right','border-bottom','border-left'].forEach(function(name){
 specialProperties[name]={
@@ -53,7 +51,7 @@ numberize.push(prop+'-'+dir);
 });
 });
 
-//map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
+
 var directionMaps={
 'border-radius':{
 'Top':'top-left',
@@ -63,20 +61,20 @@ var directionMaps={
 
 
 
-//Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and
-// border-radius
+
+
 function directionToPropertyName(property,direction){
 var names=property.split('-');
 names.splice(1,0,directionMaps[property]?directionMaps[property][direction]:direction);
 return(0,_toCamelCase2.default)(names.join('-'));
 }
 
-// CSS properties that are not supported by React Native
-// The list of supported properties is at
-// https://facebook.github.io/react-native/docs/style.html#supported-properties
+
+
+
 var unsupported=['display'];var _ParseCSS=
 
-(0,_cssParse2.default)(_utils2.default.clean(stylesheetString));var stylesheet=_ParseCSS.stylesheet;
+(0,_cssParse2.default)(_utils2.default.clean(stylesheetString)),stylesheet=_ParseCSS.stylesheet;
 
 var JSONResult={};
 

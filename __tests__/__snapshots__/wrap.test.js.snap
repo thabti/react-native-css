@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`wrap should pass all properties to wrapped component and add styles to the view 1`] = `
 <View
   className="direct"
@@ -6,7 +8,8 @@ exports[`wrap should pass all properties to wrapped component and add styles to 
   prop4="4"
   style={
     Object {
-      "margin": 5
+      "margin": 5,
     }
-  } />
+  }
+/>
 `;

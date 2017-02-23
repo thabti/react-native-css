@@ -101,7 +101,7 @@ export default class ReactNativeCss {
 
           if (specialProperties[property]) {
             let special = specialProperties[property],
-                matches = special.regex.exec(value);
+              matches = special.regex.exec(value);
             if (matches) {
               if (typeof special.map === 'function') {
                 special.map(matches, styles, rule.declarations);

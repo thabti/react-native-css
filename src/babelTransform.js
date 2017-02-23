@@ -1,5 +1,4 @@
 import RNC from './index';
-import fs from 'fs';
 import path from 'path';
 import {spawn} from 'child_process';
 const css = new RNC();
@@ -9,10 +8,6 @@ function runWatcher(input, output) {
 }
 
 function startTransform(input, output) {
-  try {
-    fs.mkdirSync('./_css');
-  } catch (e) {
-  }
 
   css.parse({
     input,
@@ -31,16 +26,16 @@ function startTransform(input, output) {
 export default function ({ types: t }) {
   return {
     visitor: {
-      ImportDeclaration (transformPath, {file}) {
+      ImportDeclaration (transformPath) {
         let resolvePath = transformPath.node.source.value;
         if (resolvePath.startsWith('css!')) {
           resolvePath = resolvePath.substr(4);
           let name = resolvePath.replace(/\.\.\/|\.\//g, '').replace(/\//g, '_').split('.')[0];
           let absolutePath = path.resolve(resolvePath),
-            relativePath = `${path.dirname(path.relative('./', file.opts.filename))}/_css/${name}.js`;
-          startTransform(absolutePath, path.resolve(`./_css/${name}.js`));
+            relativePath = `${path.dirname(absolutePath)}/_transformed/${name}.js`;
+          startTransform(absolutePath, path.resolve(relativePath));
 
-          let expression = (t.callExpression(t.memberExpression(t.callExpression(t.identifier('require'), [t.stringLiteral('react-native-css')]), t.identifier('register')), [t.callExpression(t.identifier('require'), [t.stringLiteral(relativePath)])]));
+          let expression = (t.callExpression(t.memberExpression(t.callExpression(t.identifier('require'), [t.stringLiteral('react-native-css')]), t.identifier('register')), [t.callExpression(t.identifier('require'), [path.resolve(relativePath)])]));
           transformPath.replaceWith(expression);
         }
       }
