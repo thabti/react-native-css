@@ -1,6 +1,6 @@
 import ReactNative from "react-native";
 import css,{register,unregister} from "./css";
-import wrap,{map} from "./wrap";
+import wrap from "./wrap";
 
 //These are all the components in react native to wrap with the styled proxy component
 const componentsToWrap = ["ActivityIndicator",
@@ -76,6 +76,5 @@ StyledComponents.unregister = unregister;
 StyledComponents.register = register;
 StyledComponents.css = css;
 StyledComponents.wrap = wrap;
-StyledComponents.map = map;
 
 module.exports = StyledComponents;

@@ -14,7 +14,10 @@ global.Promise = require.requireActual('promise');
 describe('wrap', ()=> {
   it('should pass all properties to wrapped component and add styles to the view', async ()=> {
     //create the style object
-    let styles = await css.parse('./__tests__/fixtures/style-inherit.css', null, false, true, true);
+    let styles = css.parse({
+      input: './__tests__/fixtures/style-inherit.css',
+      useInheritance: true
+    });
 
     //register the global sheet
     register(styles);

@@ -21,7 +21,7 @@ if(inputOutput) {
   var input = path.resolve(process.cwd(), inputArgs);
   var output = path.resolve(process.cwd(), outputArgs);
 
-  css.parse(input, output, prettyPrint, literalObject, useInheritance);
+  css.parse({input:input, output:output, prettyPrint:prettyPrint, literalObject:literalObject, useInheritance:useInheritance});
 
   if(watch) {
     console.log('Watching for changes on:'.green, inputArgs);
@@ -31,7 +31,7 @@ if(inputOutput) {
       ignored: /[\/\\]\./, persistent: true
     }).on('change', function(path) {
       console.log('File', inputArgs, 'has been changed'.green);
-      css.parse(input, output, prettyPrint, literalObject, useInheritance);
+      css.parse({input:input, output:output, prettyPrint:prettyPrint, literalObject:literalObject, useInheritance:useInheritance});
     });
   }
 }else if(help ) {

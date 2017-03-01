@@ -1,7 +1,12 @@
+machine:
+  node:
+    version: 6.1.0
+
 dependencies:
   pre:
+    - npm install -g npm
     - npm install
-    - npm install -g babel
+    - npm rebuild
 
 test:
   override:

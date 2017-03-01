@@ -30,7 +30,7 @@ You can use the wrapped style components instead of those out of the `react-nati
 
 ### Create your stylesheet
 You create your CSS styles normally, however remember that React Native only supports a small subset of style properties that can be mapped to CSS. See  [http://facebook.github.io/react-native/docs/view.html#style](http://facebook.github.io/react-native/docs/view.html#style) for more information.
-Also, only a small subset of selectors are supported.  Components (including `*`), classes, child (`>`) and `:not(.className)` are supported and  `:first-child`, `:nth-child(n)` and `:last-child` are supported only if the components are immediately wrapped with the *map* function.
+Also, only a small subset of selectors are supported.  Components (including `*`), classes, child (`>`), `:not(.className)`,`:first-child`, `:nth-child(n)` and `:last-child` are supported.
 There is currently **no** support for siblings (`+`,`~`), props (`[name="value"]`) or the myriad of pseudo-class selectors.
 
 Also, styles for text must be in a selector that terminates in a text component (compound selectors are okay, e.g. `text.someClass:first-child`). This is because text styles are filtered out of all other selectors when the CSS is converted.
@@ -51,14 +51,13 @@ root {
   //This will take precedence over the text {...} rule
   font-size: 22px;
   color: $myAwesomeColor;
-  //If you wrap components in the map method, you can use child-position pseudo selectors.
   &:last-child {
     font-weight: bold;
   }
 }
 
-//You need to either style a text component or specify that a selector is a // text element using the :text pseudo selector.
-.someTextClass:text {
+//You need to explicitly style a text component for text properties to apply
+text.someTextClass {
   font-size:20px;
 }
 
@@ -120,7 +119,7 @@ register(require('./styles/default.js'), require('./styles/ios_theme.js'))
 //MyComponent.js
 import React,{Component} from 'react'
 //use react-native-css as a drop-in replacement for react-native
-import {View,Text,TouchableOpacity,wrap,map} from 'react-native-css'
+import {View,Text,TouchableOpacity,wrap} from 'react-native-css'
 
 class MyComponent extends Component {
   render() {
@@ -168,7 +167,6 @@ class MyComponent extends Component {
 
 export default MyComponent
 
-//Enable :last-child,:first-child and :nth-child(n) selectors using map([Component])
 
 class MyComponent extends Component {
   state = {
@@ -181,14 +179,9 @@ class MyComponent extends Component {
     //Here we can do a short circuit for the 'active' class and let the library do the ugly work.
     return (
       <View className={['my-component',someActiveFlag && 'active']}>
-        {//map will automatically add keys (index) if not set. This is fine for static arrays, however set keys for dynamic children to prevent state issues.
-          map([
-            <Text>This is some text that will be automatically styled with text element selector (.my-component text:first-child {'{...}'}).</Text>,
-            <Text>This is some text that will be automatically styled with text element selector (.my-component text:nth-child(2) {'{...}'}).</Text>,
-            <Text>This is some text that will be automatically styled with text element selector (.my-component text:last-child {'{...}'}).</Text>
-          ])
-          //just wrap an Array#map() call to get functionality on a dynamic set, e.g. map(someArray.map(item=><Component .../>))
-        }
+        <Text>This is some text that will be automatically styled with text element selector (.my-component text:first-child {'{...}'}).</Text>
+        <Text>This is some text that will be automatically styled with text element selector (.my-component text:nth-child(2) {'{...}'}).</Text>
+        <Text>This is some text that will be automatically styled with text element selector (.my-component text:last-child {'{...}'}).</Text>
         <TouchableOpacity onPress={()=>this.setState({someActiveFlag:true})}>
           <View>
             <Text>
@@ -231,9 +224,6 @@ Rules are ordered by how well they match the path of a component and ordered fro
 
 ### className
 The *className* property is slightly different than how it implemented in standard React.  Standard React only excepts a string as the value, while this library will accept either a string or an array of strings or string arrays.  If you use this library in a web environment, className is passed unaltered which means you can only pass a string. If you use it in web environments, wrap the className arrays with the `normalizeClassNames` functions which will convert the array into a string.
-
-### :first-child, :last-child, :nth-child(n)
-Because we use standardized Context to calculate a component's position in the tree, it is impossible to infer a component's position amongst its siblings.  To overcome this we have the `map` function to clone each child aware of its position amongst its siblings in the passed array.  Without using `map` these pseudo classes will not work.
 
 ### Running in the browser
 If you plan on using the fantastic *react-native-web* in order to run your React Native app in the browser, you should know that this library becomes a no op meaning any library specific features can't be used.  This is a performance consideration as it is much less expensive to defer to the browsers native CSS operations.  

@@ -5,36 +5,32 @@ import inheritance,{numeric} from './inheritance';
 
 export default class ReactNativeCss {
 
-  async parse(input, output = './style.js', prettyPrint = false, literalObject = false, useInheritance = false) {
-    if(utils.contains(input, /scss/)) {
-
+  parse({input, output, prettyPrint = false, literalObject = false, useInheritance = false}) {
+    if (!input) {
+      throw new Error('An input file is required.');
+    }
+    let data;
+    if (utils.contains(input, /scss/)) {
       let {css} = require('node-sass').renderSync({
         file: input,
         outputStyle: 'compressed'
       });
-
-      let styleSheet = this.toJSS(css.toString(),useInheritance);
-      if(output)
-        utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-      return styleSheet;
-
+      data = css.toString();
     } else {
-      return await new Promise((resolve,reject)=>utils.readFile(input, (err, data) => {
-        if (err) {
-          return reject(err);
-        }
-        let styleSheet = this.toJSS(data,useInheritance);
-        if(output)
-          utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-        resolve(styleSheet);
-      }));
+      data = utils.readFile(input);
     }
+
+    let styleSheet = this.toJSS(data, useInheritance);
+    if (output) {
+      utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
+    }
+    return styleSheet;
   }
 
-  toJSS(stylesheetString,useInheritance=false) {
+  toJSS(stylesheetString, useInheritance = false) {
     const directions = ['top', 'right', 'bottom', 'left'];
     const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
-    const numberize = utils.filterArray(['width', 'height', 'font-size', 'line-height'].concat(directions),useInheritance?numeric:[]);
+    const numberize = utils.filterArray(['width', 'height', 'font-size', 'line-height'].concat(directions), useInheritance ? numeric : []);
     //special properties and shorthands that need to be broken down separately
     const specialProperties = {};
     ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(name=> {
@@ -57,23 +53,25 @@ export default class ReactNativeCss {
 
     //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
     const directionMaps = {
-      'border-radius':{
-        'Top':'top-left',
-        'Right':'top-right',
-        'Bottom':'bottom-right',
+      'border-radius': {
+        'Top': 'top-left',
+        'Right': 'top-right',
+        'Bottom': 'bottom-right',
         'Left': 'bottom-left'
       }
     };
 
-    //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
-    function directionToPropertyName(property,direction){
+    //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and
+    // border-radius
+    function directionToPropertyName(property, direction) {
       let names = property.split('-');
-      names.splice(1,0,directionMaps[property]?directionMaps[property][direction]:direction);
+      names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
       return toCamelCase(names.join('-'));
     }
 
     // CSS properties that are not supported by React Native
-    // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
+    // The list of supported properties is at
+    // https://facebook.github.io/react-native/docs/style.html#supported-properties
     const unsupported = ['display'];
 
     let {stylesheet} = ParseCSS(utils.clean(stylesheetString));
@@ -81,7 +79,9 @@ export default class ReactNativeCss {
     let JSONResult = {};
 
     for (let rule of stylesheet.rules) {
-      if (rule.type !== 'rule') continue;
+      if (rule.type !== 'rule') {
+        continue;
+      }
 
       for (let selector of rule.selectors) {
         if (!useInheritance) {
@@ -92,7 +92,9 @@ export default class ReactNativeCss {
 
         for (let declaration of rule.declarations) {
 
-          if (declaration.type !== 'declaration') continue;
+          if (declaration.type !== 'declaration') {
+            continue;
+          }
 
           let value = declaration.value;
           let property = declaration.property;
@@ -118,7 +120,9 @@ export default class ReactNativeCss {
             }
           }
 
-          if (utils.arrayContains(property, unsupported)) continue;
+          if (utils.arrayContains(property, unsupported)) {
+            continue;
+          }
 
           if (utils.arrayContains(property, numberize)) {
             styles[toCamelCase(property)] = parseFloat(value.replace(/px|\s*/g, ''));
