@@ -26,13 +26,13 @@ function startTransform(input, output) {
 export default function ({ types: t }) {
   return {
     visitor: {
-      ImportDeclaration (transformPath) {
+      ImportDeclaration (transformPath, {file}) {
         let resolvePath = transformPath.node.source.value;
         if (resolvePath.startsWith('css!')) {
           resolvePath = resolvePath.substr(4);
           let name = resolvePath.replace(/\.\.\/|\.\//g, '').replace(/\//g, '_').split('.')[0];
-          let absolutePath = path.resolve(resolvePath),
-            relativePath = `${path.dirname(absolutePath)}/_transformed/${name}.js`;
+          let absolutePath = path.resolve(path.dirname(file.opts.filename), resolvePath),
+              relativePath = `${path.dirname(absolutePath)}/_transformed/${name}.js`;
           startTransform(absolutePath, path.resolve(relativePath));
 
           let expression = (t.callExpression(t.memberExpression(t.callExpression(t.identifier('require'), [t.stringLiteral('react-native-css')]), t.identifier('register')), [t.callExpression(t.identifier('require'), [path.resolve(relativePath)])]));
