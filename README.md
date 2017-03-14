@@ -1,47 +1,51 @@
-# react-native-css
+# We are looking for additional contributors
+Raise and issue and I will add you. After a PR. 
 
-Write your React-Native component styles in CSS. React-native-css turns valid CSS into the Facebook subset of CSS.
 
-## intall
+# react-native-css (and SCSS) [![Circle CI](https://circleci.com/gh/sabeurthabti/react-native-css.svg?style=svg&circle-token=a140907997e6a37c6c5ec75f04e8150cef049ff6)](https://circleci.com/gh/sabeurthabti/react-native-css) [![NPM](https://img.shields.io/npm/dm/react-native-css.svg?style=flat-square)](https://www.npmjs.com/package/react-native-css)
+
+ React-native-css turns valid CSS/SASS into the Facebook subset of CSS.
+
+## Install
 
 Global
 
 ```bash
-npm install react-native-css -g 
+npm install react-native-css -g
 ```
 
-or locally
-
-```bash
-npm install react-native-css --save
-```
 # Command Line Interface
 
 React-native-css comes with a cli and you can watch a file and compile it.
 
 ``` shell
 # example 1
-react-native-css INPUT_CSS_FILE OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE --watch
 ```
 
 ``` shell
 # example 2
-react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE -watch ` 
+react-native-css -i INPUT_CSS_FILE -o OUTPUT_JS_FILE --watch --pretty
 ```
 
 ``` shell
-react-native-css style.css style.js -w
+# example 3
+react-native-css INPUT_CSS_FILE OUTPUT_JS_FILE -w
 ```
 
-Commands
-- "-w" or -"watch" - watch for changes.
+``` shell
+react-native-css -i style.css -o style.js -w
+```
+
+Flags
+- "-w" or "--watch" - watch for changes and recompile.
 - "-i" takes a input (optional)
 - "-o" takes an output path (optional)
+- "-p" or "--pretty" - pretty print the resulting compiled output
+- "-l" or "--literal" - generates a javascript literal object without StyleSheet.create wrapper
 
-## why a cli?
+## Screenshot
 
-React-native-cli doesn't use the node module ecosystem. The basic setup up is to have React-native running on one terminal, and the react-native-css on another. 
-React-native-css will watch for changes and compile back to javascript.
 ![the workflow](http://i.imgur.com/i2OdwiY.png)
 
 # Example
@@ -50,16 +54,17 @@ Given the following CSS:
 
 ``` css
 description {
-  margin-Bottom: 20;
-  font-size: 18;
+  margin-bottom: 20px;
+  font-size: 18px;
   text-align: center;
   color: #656656;
 }
 
 container {
-  padding: 30;
-  margin-Top: 65;
+  padding: 30px;
+  margin-top: 65px;
   align-items: center;
+  display: block;
 }
 
 ```
@@ -71,7 +76,14 @@ React-native-css will generate to the following:
 module.exports = require('react-native').StyleSheet.create(
   {"description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}}
   );
-```
+```  
+You can make use of --literal argument and instead it will generate:
+``` javascript
+// style.js
+module.exports = {
+  "description":{"marginBottom":20,"fontSize":18,"textAlign":"center","color":"#656656"},"container":{"padding":30,"marginTop":65,"alignItems":"center"}
+  }
+```  
 
 # Usage
 ```js
@@ -94,15 +106,3 @@ class SearchPage extends Component {
 }
 
 ```
-
-# News
-
-16/11/15 - minor rewrite, and I removed support for `sass` due to `node 4.0.0` issues. 
-
-
-# Todo
-
-* support Sass again
-* support multiple outputs
-* support for custom output directory (if needed);
-

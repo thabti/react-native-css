@@ -1,7 +1,12 @@
+machine:
+  node:
+    version: 6.1.0
+
 dependencies:
   pre:
+    - npm install -g npm
     - npm install
-    - sh login.sh
+    - npm rebuild
 
 test:
   override:
@@ -11,11 +16,12 @@ deployment:
   production:
     branch: master
     commands:
-      - echo "doing a patch update!"
+      - sh login.sh
       - git config --global push.default matching
-      - git config --global user.email "sabeur.thabti@gmail.com"
+      - git config --global user.email "thabti.sabeur@gmail.com"
       - git config --global user.name "Sabeur Thabti"
       - npm version patch
       - git commit --amend -m 'automated patching [ci skip]'
       - git push
       - npm publish ./
+      - echo "doing a patch update!"

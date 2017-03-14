@@ -1,0 +1,1 @@
+module.exports = require('react-native').StyleSheet.create({"row":{"top":50,"paddingTop":10,"paddingRight":10,"paddingBottom":10,"paddingLeft":5,"flexDirection":"row","margin":10,"marginBottom":2,"borderBottomWidth":5,"opacity":0.6}});

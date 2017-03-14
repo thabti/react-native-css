@@ -1,0 +1,1 @@
+module.exports = require('react-native').StyleSheet.create({"text":{"fontSize":12,"width":100}});

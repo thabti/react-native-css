@@ -1,151 +1,186 @@
 import ParseCSS from 'css-parse';
 import toCamelCase from 'to-camel-case';
-import fs from 'fs';
+import utils from './utils';
+import inheritance,{numeric} from './inheritance';
 
-export default {
+export default class ReactNativeCss {
 
-	parse (input, output = './style.js') {
+  parse({input, output, prettyPrint = false, literalObject = false, useInheritance = false}) {
+    if (!input) {
+      throw new Error('An input file is required.');
+    }
+    let data;
+    if (utils.contains(input, /scss/)) {
+      let {css} = require('node-sass').renderSync({
+        file: input,
+        outputStyle: 'compressed'
+      });
+      data = css.toString();
+    } else {
+      data = utils.readFile(input);
+    }
 
+    let styleSheet = this.toJSS(data, useInheritance);
+    if (output) {
+      utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
+    }
+    return styleSheet;
+  }
 
-		if (input.includes('scss')) {
+  toJSS(stylesheetString, useInheritance = false) {
+    const directions = ['top', 'right', 'bottom', 'left'];
+    const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
+    const numberize = utils.filterArray(['width', 'height', 'font-size', 'line-height'].concat(directions), useInheritance ? numeric : []);
+    //special properties and shorthands that need to be broken down separately
+    const specialProperties = {};
+    ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(name=> {
+      specialProperties[name] = {
+        regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
+        map: {
+          1: `${name}-width`,
+          3: name == 'border' ? `${name}-style` : null,
+          4: `${name}-color`
+        }
+      };
+    });
 
-			// todo: add Sass  supprt
+    directions.forEach((dir) => {
+      numberize.push(`border-${dir}-width`);
+      changeArr.forEach((prop) => {
+        numberize.push(`${prop}-${dir}`);
+      });
+    });
 
-			//let {css} = require('node-sass').renderSync({
-			//	file: input,
-			//	outputStyle: 'compressed'
-			//});
-            //
-			//let styleSheet = this.handleRulesAndReturnCSSJSON(css);
-			//return helpers.outputReactFriendlyStyle(styleSheet, output)
+    //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
+    const directionMaps = {
+      'border-radius': {
+        'Top': 'top-left',
+        'Right': 'top-right',
+        'Bottom': 'bottom-right',
+        'Left': 'bottom-left'
+      }
+    };
 
-			console.error("Error: Sass support has been disabled, submit an issue.")
-		} else {
+    //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and
+    // border-radius
+    function directionToPropertyName(property, direction) {
+      let names = property.split('-');
+      names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
+      return toCamelCase(names.join('-'));
+    }
 
-			helpers.readFile(input, (err, data) => {
-				let styleSheet = this.handleRulesAndReturnCSSJSON(data);
-				helpers.outputReactFriendlyStyle(styleSheet, output)
-			});
-		}
+    // CSS properties that are not supported by React Native
+    // The list of supported properties is at
+    // https://facebook.github.io/react-native/docs/style.html#supported-properties
+    const unsupported = ['display'];
 
-	},
+    let {stylesheet} = ParseCSS(utils.clean(stylesheetString));
 
-	handleRulesAndReturnCSSJSON(stylesheetString) {
+    let JSONResult = {};
 
-		const changeArr = ['margin', 'padding'];
-		let {stylesheet} = ParseCSS(helpers.clean(stylesheetString));
+    for (let rule of stylesheet.rules) {
+      if (rule.type !== 'rule') {
+        continue;
+      }
 
-		let JSONResult = {};
+      for (let selector of rule.selectors) {
+        if (!useInheritance) {
+          selector = selector.replace(/\.|#/g, '').trim();
+        }
 
-		for (let rule of stylesheet.rules) {
-			if (rule.type !== 'rule') return;
+        let styles = (JSONResult[selector] = JSONResult[selector] || {});
 
-			for (let selector of rule.selectors) {
-				selector = selector.replace(/\.|#/g, '');
-				let styles = (JSONResult[selector] = JSONResult[selector] || {});
+        for (let declaration of rule.declarations) {
 
-				let declarationsToAdd = [];
+          if (declaration.type !== 'declaration') {
+            continue;
+          }
 
+          let value = declaration.value;
+          let property = declaration.property;
 
-				for (let declaration of rule.declarations) {
-					if (declaration.type !== 'declaration') return;
+          if (specialProperties[property]) {
+            let special = specialProperties[property],
+              matches = special.regex.exec(value);
+            if (matches) {
+              if (typeof special.map === 'function') {
+                special.map(matches, styles, rule.declarations);
+              } else {
+                for (let key in special.map) {
+                  if (matches[key] && special.map[key]) {
+                    rule.declarations.push({
+                      property: special.map[key],
+                      value: matches[key],
+                      type: 'declaration'
+                    });
+                  }
+                }
+              }
+              continue;
+            }
+          }
 
-					let value = declaration.value;
-					let property = declaration.property;
+          if (utils.arrayContains(property, unsupported)) {
+            continue;
+          }
 
+          if (utils.arrayContains(property, numberize)) {
+            styles[toCamelCase(property)] = parseFloat(value.replace(/px|\s*/g, ''));
+          }
 
-					if (helpers.indexOf(property, changeArr)) {
-						var baseDeclaration = {
-							type: 'description'
-						};
+          else if (utils.arrayContains(property, changeArr)) {
 
-						var values = value.replace(/px|\s*/g, '').split(',');
+            var values = value.replace(/px/g, '').split(/[\s,]+/);
 
-						values.forEach(function (value, index, arr) {
-							arr[index] = parseInt(value);
-						});
+            values.forEach(function (value, index, arr) {
+              arr[index] = parseInt(value);
+            });
 
-						var length = values.length;
+            var length = values.length;
 
-						if (length === 1) {
+            if (length === 1) {
 
-							for (let prop of ['Top', 'Bottom', 'Right', 'Left']) {
-								styles[property + prop] = values[0];
-							}
+              styles[toCamelCase(property)] = values[0];
 
-						}
+            }
 
-						if (length === 2) {
+            if (length === 2) {
 
-							for (let prop of ['Top', 'Bottom']) {
-								styles[property + prop] = values[0];
-							}
+              for (let prop of ['Top', 'Bottom']) {
+                styles[directionToPropertyName(property, prop)] = values[0];
+              }
 
-							for (let prop of ['Top', 'Bottom']) {
-								styles[property + prop] = values[1];
-							}
-						}
+              for (let prop of ['Left', 'Right']) {
+                styles[directionToPropertyName(property, prop)] = values[1];
+              }
+            }
 
-						if (length === 3) {
+            if (length === 3) {
 
-							for (let prop of ['Left', 'Right']) {
-								styles[property + prop] = values[1];
-							}
+              for (let prop of ['Left', 'Right']) {
+                styles[directionToPropertyName(property, prop)] = values[1];
+              }
 
-							styles[`${property}Top`] = values[0];
-							styles[`${property}Bottom`] = values[2];
-						}
+              styles[directionToPropertyName(property, 'Top')] = values[0];
+              styles[directionToPropertyName(property, 'Bottom')] = values[2];
+            }
 
-						if (length === 4) {
-							['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-								styles[property + prop] = values[index];
-							});
-						}
-					}
-					else {
-						if (Number.isNaN(declaration.value)) {
-							declaration.value = parseInt(declaration.value);
-							styles[toCamelCase(property)] = declaration.value;
-						} else {
-							styles[toCamelCase(property)] = declaration.value;
-						}
-					}
+            if (length === 4) {
+              ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
+                styles[directionToPropertyName(property, prop)] = values[index];
+              });
+            }
+          }
+          else {
+            if (!isNaN(declaration.value) && property !== 'font-weight') {
+              declaration.value = parseFloat(declaration.value);
+            }
 
-				}
-			}
-		}
-
-		return JSONResult;
-
-	}
+            styles[toCamelCase(property)] = declaration.value;
+          }
+        }
+      }
+    }
+    return useInheritance ? inheritance(JSONResult) : JSONResult;
+  }
 }
-
-
-let helpers = {
-
-	indexOf(value, arr) {
-		var flag = false;
-		for (var i = 0; i < arr.length; i++) {
-			if (value === arr[i]) {
-				return true
-			}
-		}
-		return flag;
-	},
-
-	clean(string) {
-		return string.replace(/\r?\n|\r/g, "");
-	},
-
-	readFile(file, cb) {
-		fs.readFile(file, "utf8", cb);
-	},
-
-	outputReactFriendlyStyle(style, outputFile) {
-
-		var wstream = fs.createWriteStream(outputFile);
-		wstream.write(`module.exports = require('react-native').StyleSheet.create(${JSON.stringify(style)});`);
-		wstream.end();
-		return style;
-	}
-};

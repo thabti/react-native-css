@@ -1,0 +1,39 @@
+container {
+  padding: 10px 20px;
+  margin: 10px 15px 30px;
+  border-width: 10px 30px;
+  border-radius: 10px 30px;
+}
+
+second {
+  margin: 10px;
+  padding: 1px 2px 3px 4px;
+  border-width: 1px 2px 3px 4px;
+  border-radius: 1px 2px 3px 4px;
+}
+
+borderSimple {
+  border: 1px solid #eee;
+}
+
+borderNoStyle {
+  border: 1px #eee;
+}
+
+borderNoUnit {
+  border: 1 solid #eee;
+}
+
+borderNamedColor {
+  border: 1px solid blue;
+}
+
+borderRGBColor {
+  border: 1px solid rgb(100, 32, 250);
+}
+
+borderRGBAColor {
+  border: 1px solid rgba(100, 32, 250, .5);
+}
+
+

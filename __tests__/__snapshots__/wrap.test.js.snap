@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`wrap should pass all properties to wrapped component and add styles to the view 1`] = `
+<View
+  className="direct"
+  prop1="1"
+  prop2="3"
+  prop4="4"
+  style={
+    Object {
+      "margin": 5,
+    }
+  }
+/>
+`;

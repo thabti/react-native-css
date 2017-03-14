@@ -1,0 +1,51 @@
+//All the SASS/SCSS goodness for React Native
+$myAwesomeColor: pink;
+
+//Use root to set app-wide properties, these are really only text properties.
+root {
+  //This will get inherited by all text properties.
+  font-size: 18px;
+  color: #232;
+}
+
+.my-component text {
+  //This will take precedence over the text {...} rule
+  font-size: 22px;
+  color: $myAwesomeColor;
+  //If you wrap components in the map method, you can use child-position pseudo selectors.
+  &:last-child {
+    font-weight: bold;
+  }
+}
+
+//IMPORTANT: Make sure to use text element selectors whenever styling text.
+//Any text properties in rules not ending with a text selector will be stripped out.
+//This allows for inheritance without stuffing text only properties into other views.
+text {
+  //this will be used over the root size, making the root declaration pointless.
+  font-size: 16px;
+}
+
+MyComponentsElementSelectorName text {
+  color: red;
+}
+
+TouchableOpacity {
+  padding: 5px;
+  margin: 5px;
+  view text {
+    color: blue;
+  }
+}
+
+TouchableHighlight {
+  @extend TouchableOpacity; //Just love the SASS, waaaay better than fiddling with JavaScript objects
+  margin: 10px;
+  border: 1px rgba(0, 0, 0, .5);
+}
+
+//:not(.closs1.class2...) is supported.  Only class selectors are supported.
+view:not(.aClassName) {
+  //This will be automatically expanded to the proper paddingTop, paddingRight, etc. styles.
+  padding: 10px 20px;
+}
