@@ -15,6 +15,7 @@ deployment:
       - git config --global push.default matching
       - git config --global user.email "thabti.sabeur@gmail.com"
       - git config --global user.name "Sabeur Thabti"
+      - npm run build
       - npm version patch
       - git commit --amend -m 'automated patching [ci skip]'
       - git push
