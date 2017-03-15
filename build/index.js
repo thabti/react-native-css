@@ -12,15 +12,6 @@ export default class ReactNativeCss {
 
       let styleSheet = this.toJSS(css.toString());
       return styleSheet;
-    } else {
-      utils.readFile(input, (err, data) => {
-        if (err) {
-          console.error(err);
-          process.exit();
-        }
-        let styleSheet = this.toJSS(data);
-        return styleSheet;
-      });
     }
   }
 
