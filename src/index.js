@@ -3,14 +3,33 @@ import toCamelCase from 'to-camel-case';
 import utils from './utils.js'
 export default class ReactNativeCss {
 
-  constructor() {
+  parseSync(input) {
+    if (utils.contains(input, /scss/)) {
+      let { css } = require('node-sass').renderSync({
+        file: input,
+        outputStyle: 'compressed'
+      });
 
+      let styleSheet = this.toJSS(css.toString());
+      return styleSheet
+
+    } else {
+      utils.readFile(input, (err, data) => {
+        if (err) {
+          console.error(err);
+          process.exit();
+        }
+        let styleSheet = this.toJSS(data);
+        return styleSheet;
+      });
+    }
   }
 
-  parse(input, output = './style.js', prettyPrint = false, literalObject = false, cb) {
-    if(utils.contains(input, /scss/)) {
 
-      let {css} = require('node-sass').renderSync({
+  parse(input, output = './style.js', prettyPrint = false, literalObject = false, cb) {
+    if (utils.contains(input, /scss/)) {
+
+      let { css } = require('node-sass').renderSync({
         file: input,
         outputStyle: 'compressed'
       });
@@ -18,7 +37,7 @@ export default class ReactNativeCss {
       let styleSheet = this.toJSS(css.toString());
       utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
 
-      if(cb) {
+      if (cb) {
         cb(styleSheet);
       }
 
@@ -31,7 +50,7 @@ export default class ReactNativeCss {
         let styleSheet = this.toJSS(data);
         utils.outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
 
-        if(cb) {
+        if (cb) {
           cb(styleSheet);
         }
       });
@@ -44,7 +63,7 @@ export default class ReactNativeCss {
     const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
     //special properties and shorthands that need to be broken down separately
     const specialProperties = {};
-    ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(name=> {
+    ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(name => {
       specialProperties[name] = {
         regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
         map: {
@@ -64,18 +83,18 @@ export default class ReactNativeCss {
 
     //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
     const directionMaps = {
-      'border-radius':{
-        'Top':'top-left',
-        'Right':'top-right',
-        'Bottom':'bottom-right',
+      'border-radius': {
+        'Top': 'top-left',
+        'Right': 'top-right',
+        'Bottom': 'bottom-right',
         'Left': 'bottom-left'
       }
     };
 
     //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
-    function directionToPropertyName(property,direction){
+    function directionToPropertyName(property, direction) {
       let names = property.split('-');
-      names.splice(1,0,directionMaps[property]?directionMaps[property][direction]:direction);
+      names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
       return toCamelCase(names.join('-'));
     }
 
@@ -84,12 +103,12 @@ export default class ReactNativeCss {
     const unsupported = ['display'];
 
     const nonMatching = {
-        'flex-grow': 'flex',
-        'text-decoration': 'textDecorationLine',
-        'vertical-align': 'textVerticalAlign'
+      'flex-grow': 'flex',
+      'text-decoration': 'textDecorationLine',
+      'vertical-align': 'textVerticalAlign'
     };
 
-    let {stylesheet} = ParseCSS(utils.clean(stylesheetString));
+    let { stylesheet } = ParseCSS(utils.clean(stylesheetString));
 
     let JSONResult = {};
 
@@ -111,7 +130,7 @@ export default class ReactNativeCss {
 
           if (specialProperties[property]) {
             let special = specialProperties[property],
-                matches = special.regex.exec(value)
+              matches = special.regex.exec(value)
             if (matches) {
               if (typeof special.map === 'function') {
                 special.map(matches, styles, rule.declarations)
@@ -133,12 +152,12 @@ export default class ReactNativeCss {
           if (utils.arrayContains(property, unsupported)) continue;
 
           if (nonMatching[property]) {
-              rule.declarations.push({
-                property: nonMatching[property],
-                value: value,
-                type: 'declaration'
-              })
-              continue;
+            rule.declarations.push({
+              property: nonMatching[property],
+              value: value,
+              type: 'declaration'
+            })
+            continue;
           }
 
           if (utils.arrayContains(property, numberize)) {
