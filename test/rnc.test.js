@@ -49,6 +49,22 @@ css.parse('./test/fixtures/style.scss', './test/fixtures/stylescss.js', false, f
       });
     });
 
+t.test("Parse nested SCSS", function(t) {
+css.parse('./test/fixtures/style-nested.scss', './test/fixtures/style-nested.js', false, false, function(data) {
+  expect(data).toEqual({ regulations:
+    { 
+      textAlign: 'center',
+      foo: {
+        alignItems: 'center',
+        alignSelf: 'center',
+        button: {
+          justifyContent: 'center'
+        }
+      }
+    }});
+    t.end();
+  });
+});
 
 t.test("Parse SCSS error", function(t) {
   css.parse('./test/fixtures/style-20.scss', './test/fixtures/stylescss-20.js', false, false, function(data) {
