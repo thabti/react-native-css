@@ -1,6 +1,9 @@
 import ParseCSS from 'css-parse';
 import toCamelCase from 'to-camel-case';
-import utils from './utils.js'
+import utils from './utils.js';
+import _get from 'lodash.get';
+import _set from 'lodash.set';
+
 export default class ReactNativeCss {
 
   parseSync(input) {
@@ -99,7 +102,6 @@ export default class ReactNativeCss {
     };
 
     let { stylesheet } = ParseCSS(utils.clean(stylesheetString));
-
     let JSONResult = {};
 
     for (let rule of stylesheet.rules) {
@@ -107,7 +109,27 @@ export default class ReactNativeCss {
 
       for (let selector of rule.selectors) {
         selector = selector.replace(/\.|#/g, '');
-        let styles = (JSONResult[selector] = JSONResult[selector] || {});
+
+        let styles;
+        // check if there are any selectors with empty spaces, meaning they should be nested
+        let composedSelector = selector.match(/\s+(\S)+/g);
+
+        if (composedSelector) {
+          // get the first selector from the nested selector
+          let selectorPath = selector.match(/^\S+/)[0];
+          while (composedSelector.length) {
+            let currentSelector = composedSelector.shift().replace(/\s+/, '');
+            selectorPath += `[${currentSelector}]`;
+          }
+
+          // we don't have to be smart here. It's either an object or undefined.
+          if (!_get(JSONResult, selectorPath)) {
+            _set(JSONResult, selectorPath, {});
+          }
+          styles = _get(JSONResult, selectorPath);
+        } else {
+          styles = (JSONResult[selector] = JSONResult[selector] || {});
+        }
 
         let declarationsToAdd = [];
 
@@ -170,7 +192,7 @@ export default class ReactNativeCss {
 
             if (length === 1) {
 
-              styles[toCamelCase(property)] = values[0]
+              styles[toCamelCase(property)] = values[0];
 
             }
 
@@ -211,6 +233,7 @@ export default class ReactNativeCss {
         }
       }
     }
-    return JSONResult
+
+    return JSONResult;
   }
 }
