@@ -174,7 +174,7 @@ export default class ReactNativeCss {
 
           if (utils.arrayContains(property, numberize)) {
             var value = value.replace(/px|\s*/g, '');
-            styles[toCamelCase(property)] = parseFloat(value);
+            styles[toCamelCase(property)] = value === 'auto' ? value : parseFloat(value);
           }
 
           else if (utils.arrayContains(property, changeArr)) {
@@ -185,7 +185,7 @@ export default class ReactNativeCss {
             var values = value.replace(/px/g, '').split(/[\s,]+/);
 
             values.forEach(function (value, index, arr) {
-              arr[index] = parseInt(value);
+              arr[index] = value === 'auto' ? value : parseInt(value);
             });
 
             var length = values.length;
@@ -225,7 +225,7 @@ export default class ReactNativeCss {
           }
           else {
             if (!isNaN(declaration.value) && property !== 'font-weight') {
-              declaration.value = parseFloat(declaration.value);
+              declaration.value = declaration.value === 'auto' ? declaration.value : parseFloat(declaration.value);
             }
 
             styles[toCamelCase(property)] = declaration.value;

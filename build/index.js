@@ -239,7 +239,7 @@ var ReactNativeCss = (function () {
                   if (_utilsJs2['default'].arrayContains(property, numberize)) {
                     value = value.replace(/px|\s*/g, '');
 
-                    styles[(0, _toCamelCase2['default'])(property)] = parseFloat(value);
+                    styles[(0, _toCamelCase2['default'])(property)] = value === 'auto' ? value : parseFloat(value);
                   } else if (_utilsJs2['default'].arrayContains(property, changeArr)) {
                     baseDeclaration = {
                       type: 'description'
@@ -247,7 +247,7 @@ var ReactNativeCss = (function () {
                     values = value.replace(/px/g, '').split(/[\s,]+/);
 
                     values.forEach(function (value, index, arr) {
-                      arr[index] = parseInt(value);
+                      arr[index] = value === 'auto' ? value : parseInt(value);
                     });
 
                     length = values.length;
@@ -291,7 +291,7 @@ var ReactNativeCss = (function () {
                     }
                   } else {
                     if (!isNaN(declaration.value) && property !== 'font-weight') {
-                      declaration.value = parseFloat(declaration.value);
+                      declaration.value = declaration.value === 'auto' ? declaration.value : parseFloat(declaration.value);
                     }
 
                     styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
