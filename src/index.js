@@ -6,6 +6,26 @@ import _set from 'lodash.set';
 
 export default class ReactNativeCss {
 
+  parseString(input, sync) {
+    const nodeSass = require('node-sass');
+    if (sync) {
+      const { css } = nodeSass.renderSync({
+        data: input,
+        outputStyle: 'compressed'
+      });
+
+      return this.toJSS(css.toString());
+    }
+
+    return nodeSass.render({
+      data: input,
+      outputStyle: 'compressed'
+    }, (err, { css }) => {
+      if (err) console.error(err);
+      return this.toJSS(css.toString());
+    });
+  }
+
   parseSync(input) {
     if (utils.contains(input, /scss/)) {
       let { css } = require('node-sass').renderSync({
