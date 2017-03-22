@@ -1,5 +1,5 @@
 # No Longer under active development. 
-I really don't do React-Native, and I am not the best person to push this project further. I am keen for someone to pick this up and champsion it further. 
+Looking for someone to take over and push this project further. 
 
 #### Some ideas:
  - Babel transform
