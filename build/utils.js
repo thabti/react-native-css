@@ -1,20 +1,20 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-const _createClass = (function () { function defineProperties(target, props) { for (let i = 0; i < props.length; i++) { const descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }());
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-const _fs = require('fs');
+var _fs = require('fs');
 
-const _fs2 = _interopRequireDefault(_fs);
+var _fs2 = _interopRequireDefault(_fs);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-const Utils = (function () {
+var Utils = function () {
   function Utils() {
     _classCallCheck(this, Utils);
   }
@@ -22,7 +22,7 @@ const Utils = (function () {
   _createClass(Utils, null, [{
     key: 'arrayContains',
     value: function arrayContains(value, arr) {
-      for (let i = 0; i < arr.length; i++) {
+      for (var i = 0; i < arr.length; i++) {
         if (value === arr[i]) {
           return true;
         }
@@ -42,10 +42,10 @@ const Utils = (function () {
   }, {
     key: 'outputReactFriendlyStyle',
     value: function outputReactFriendlyStyle(style, outputFile, prettyPrint, literalObject) {
-      const indentation = prettyPrint ? 4 : 0;
-      const jsonOutput = JSON.stringify(style, null, indentation);
-      let output = 'module.exports = ';
-      output += literalObject ? `${jsonOutput}` : `require('react-native').StyleSheet.create(${jsonOutput});`;
+      var indentation = prettyPrint ? 4 : 0;
+      var jsonOutput = JSON.stringify(style, null, indentation);
+      var output = 'module.exports = ';
+      output += literalObject ? '' + jsonOutput : 'require(\'react-native\').StyleSheet.create(' + jsonOutput + ');';
       // Write to file
       _fs2.default.writeFileSync(outputFile, output);
       return output;
@@ -53,12 +53,12 @@ const Utils = (function () {
   }, {
     key: 'contains',
     value: function contains(string, needle) {
-      const search = string.match(needle);
+      var search = string.match(needle);
       return search && search.length > 0;
     }
   }]);
 
   return Utils;
-}());
+}();
 
 exports.default = Utils;

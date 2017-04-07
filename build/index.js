@@ -1,50 +1,59 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = toJSS;
 
-const _parse = require('css/lib/parse');
+var _parse = require('css/lib/parse');
 
-const _parse2 = _interopRequireDefault(_parse);
+var _parse2 = _interopRequireDefault(_parse);
 
-const _toCamelCase = require('to-camel-case');
+var _toCamelCase = require('to-camel-case');
 
-const _toCamelCase2 = _interopRequireDefault(_toCamelCase);
+var _toCamelCase2 = _interopRequireDefault(_toCamelCase);
 
-const _utils = require('./utils');
+var _lodash = require('lodash.get');
 
-const _utils2 = _interopRequireDefault(_utils);
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _lodash3 = require('lodash.set');
+
+var _lodash4 = _interopRequireDefault(_lodash3);
+
+var _utils = require('./utils');
+
+var _utils2 = _interopRequireDefault(_utils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function toJSS(stylesheetString) {
-  const directions = ['top', 'right', 'bottom', 'left'];
-  const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
-  const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
+  var directions = ['top', 'right', 'bottom', 'left'];
+  var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
+  var numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
   // special properties and shorthands that need to be broken down separately
-  const specialProperties = {};
-  ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach((name) => {
+  var specialProperties = {};
+  ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(function (name) {
     specialProperties[name] = {
       regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
       map: {
-        1: `${name}-width`,
-        3: name == 'border' ? `${name}-style` : null,
-        4: `${name}-color`
+        1: name + '-width',
+        3: name === 'border' ? name + '-style' : null,
+        4: name + '-color'
       }
     };
   });
 
-  directions.forEach((dir) => {
-    numberize.push(`border-${dir}-width`);
-    changeArr.forEach((prop) => {
-      numberize.push(`${prop}-${dir}`);
+  directions.forEach(function (dir) {
+    numberize.push('border-' + dir + '-width');
+    changeArr.forEach(function (prop) {
+      numberize.push(prop + '-' + dir);
     });
   });
 
-  // map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
-  const directionMaps = {
+  // map of properties that when expanded
+  // use different directions than the default Top,Right,Bottom,Left.
+  var directionMaps = {
     'border-radius': {
       Top: 'top-left',
       Right: 'top-right',
@@ -53,31 +62,33 @@ function toJSS(stylesheetString) {
     }
   };
 
-  // Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
+  // Convert the shorthand property to the individual directions, handles edge cases,
+  // i.e. border-width and border-radius
   function directionToPropertyName(property, direction) {
-    const names = property.split('-');
+    var names = property.split('-');
     names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
     return (0, _toCamelCase2.default)(names.join('-'));
   }
 
   // CSS properties that are not supported by React Native
-  // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
-  const unsupported = ['display'];
+  // The list of supported properties is at:
+  // https://facebook.github.io/react-native/docs/style.html#supported-properties
+  var unsupported = ['display'];
 
-  const nonMatching = {
+  var nonMatching = {
     'flex-grow': 'flex',
     'text-decoration': 'textDecorationLine',
     'vertical-align': 'textVerticalAlign'
   };
 
-  let _ParseCSS = (0, _parse2.default)(_utils2.default.clean(stylesheetString)),
-    stylesheet = _ParseCSS.stylesheet;
+  var _ParseCSS = (0, _parse2.default)(_utils2.default.clean(stylesheetString)),
+      stylesheet = _ParseCSS.stylesheet;
 
-  const JSONResult = {};
+  var JSONResult = {};
 
-  let _iteratorNormalCompletion = true;
-  let _didIteratorError = false;
-  let _iteratorError;
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
 
   try {
     for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
@@ -85,60 +96,58 @@ function toJSS(stylesheetString) {
 
       if (rule.type !== 'rule') continue;
 
-      let _iteratorNormalCompletion2 = true;
-      let _didIteratorError2 = false;
-      let _iteratorError2;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        const _loop = function _loop() {
-          let selector = _step2.value;
+        var _loop = function _loop() {
+          var selector = _step2.value;
 
           selector = selector.replace(/\.|#/g, '');
 
-          let styles = void 0;
+          var styles = void 0;
           // check if there are any selectors with empty spaces, meaning they should be nested
-          const composedSelector = selector.match(/\s+(\S)+/g);
+          var composedSelector = selector.match(/\s+(\S)+/g);
 
           if (composedSelector) {
             // get the first selector from the nested selector
-            let selectorPath = selector.match(/^\S+/)[0];
+            var selectorPath = selector.match(/^\S+/)[0];
             while (composedSelector.length) {
-              const currentSelector = composedSelector.shift().replace(/\s+/, '');
-              selectorPath += `[${currentSelector}]`;
+              var currentSelector = composedSelector.shift().replace(/\s+/, '');
+              selectorPath += '[' + currentSelector + ']';
             }
 
             // we don't have to be smart here. It's either an object or undefined.
-            if (!_get(JSONResult, selectorPath)) {
-              _set(JSONResult, selectorPath, {});
+            if (!(0, _lodash2.default)(JSONResult, selectorPath)) {
+              (0, _lodash4.default)(JSONResult, selectorPath, {});
             }
-            styles = _get(JSONResult, selectorPath);
+            styles = (0, _lodash2.default)(JSONResult, selectorPath);
           } else {
             styles = JSONResult[selector] = JSONResult[selector] || {};
           }
 
-          const declarationsToAdd = [];
-
-          let _iteratorNormalCompletion3 = true;
-          let _didIteratorError3 = false;
-          let _iteratorError3;
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
 
           try {
-            const _loop2 = function _loop2() {
-              const declaration = _step3.value;
+            var _loop2 = function _loop2() {
+              var declaration = _step3.value;
 
               if (declaration.type !== 'declaration') return 'continue';
 
-              const value = declaration.value;
-              const property = declaration.property;
+              var value = declaration.value;
+              var property = declaration.property;
 
               if (specialProperties[property]) {
-                let special = specialProperties[property],
-                  matches = special.regex.exec(value);
+                var special = specialProperties[property];
+                var matches = special.regex.exec(value);
                 if (matches) {
                   if (typeof special.map === 'function') {
                     special.map(matches, styles, rule.declarations);
                   } else {
-                    for (const key in special.map) {
+                    for (var key in special.map) {
                       if (matches[key] && special.map[key]) {
                         rule.declarations.push({
                           property: special.map[key],
@@ -157,53 +166,49 @@ function toJSS(stylesheetString) {
               if (nonMatching[property]) {
                 rule.declarations.push({
                   property: nonMatching[property],
-                  value,
+                  value: value,
                   type: 'declaration'
                 });
                 return 'continue';
               }
 
               if (_utils2.default.arrayContains(property, numberize)) {
-                var _value = _value.replace(/px|\s*/g, '');
-                styles[(0, _toCamelCase2.default)(property)] = parseFloat(_value);
+                var valueReplaced = value.replace(/px|\s*/g, '');
+                styles[(0, _toCamelCase2.default)(property)] = parseFloat(valueReplaced);
               } else if (_utils2.default.arrayContains(property, changeArr)) {
-                const baseDeclaration = {
-                  type: 'description'
-                };
+                var values = value.replace(/px/g, '').split(/[\s,]+/);
 
-                values = value.replace(/px/g, '').split(/[\s,]+/);
-
-
-                values.forEach((value, index, arr) => {
-                  arr[index] = parseInt(value);
+                values.forEach(function (v, index, arr) {
+                  arr[index] = parseInt(v);
+                  return arr;
                 });
 
-                const length = values.length;
+                var length = values.length;
 
                 if (length === 1) {
                   styles[(0, _toCamelCase2.default)(property)] = values[0];
                 }
 
                 if (length === 2) {
-                  const _arr = ['Top', 'Bottom'];
+                  var _arr = ['Top', 'Bottom'];
 
-                  for (let _i = 0; _i < _arr.length; _i++) {
-                    const prop = _arr[_i];
+                  for (var _i = 0; _i < _arr.length; _i++) {
+                    var prop = _arr[_i];
                     styles[directionToPropertyName(property, prop)] = values[0];
                   }
 
-                  const _arr2 = ['Left', 'Right'];
-                  for (let _i2 = 0; _i2 < _arr2.length; _i2++) {
-                    const _prop = _arr2[_i2];
+                  var _arr2 = ['Left', 'Right'];
+                  for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
+                    var _prop = _arr2[_i2];
                     styles[directionToPropertyName(property, _prop)] = values[1];
                   }
                 }
 
                 if (length === 3) {
-                  const _arr3 = ['Left', 'Right'];
+                  var _arr3 = ['Left', 'Right'];
 
-                  for (let _i3 = 0; _i3 < _arr3.length; _i3++) {
-                    const _prop2 = _arr3[_i3];
+                  for (var _i3 = 0; _i3 < _arr3.length; _i3++) {
+                    var _prop2 = _arr3[_i3];
                     styles[directionToPropertyName(property, _prop2)] = values[1];
                   }
 
@@ -212,7 +217,7 @@ function toJSS(stylesheetString) {
                 }
 
                 if (length === 4) {
-                  ['Top', 'Right', 'Bottom', 'Left'].forEach((prop, index) => {
+                  ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
                     styles[directionToPropertyName(property, prop)] = values[index];
                   });
                 }
@@ -226,7 +231,7 @@ function toJSS(stylesheetString) {
             };
 
             for (var _iterator3 = rule.declarations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-              const _ret2 = _loop2();
+              var _ret2 = _loop2();
 
               if (_ret2 === 'continue') continue;
             }
@@ -247,8 +252,6 @@ function toJSS(stylesheetString) {
         };
 
         for (var _iterator2 = rule.selectors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var values;
-
           _loop();
         }
       } catch (err) {
