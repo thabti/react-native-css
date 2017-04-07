@@ -1,6 +1,6 @@
 {
   "name": "react-native-css",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Style React-Native components with css",
   "main": "build/index.js",
   "scripts": {
