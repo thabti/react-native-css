@@ -2,8 +2,6 @@
 
 > React-native-css turns valid CSS into the Facebook subset of CSS.
 
-# News
-
 ## Version 2 
 With version 2 come new changes:
 
