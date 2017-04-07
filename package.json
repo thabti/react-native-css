@@ -1,6 +1,6 @@
 {
   "name": "react-native-css",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Style React-Native components with css",
   "main": "build/index.js",
   "scripts": {
@@ -50,7 +50,6 @@
   "bugs": {
     "url": "https://github.com/sabeurthabti/react-native-css/issues"
   },
-
   "precommit": [
     "test"
   ],
