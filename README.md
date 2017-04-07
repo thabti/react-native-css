@@ -9,7 +9,7 @@ With version 2 come new changes:
 
 - Remove sass/scss support, this is a huge overhead for little benefit. 
 - No CLI, we believe that this is an unnecessary context switch
-- NO I/O, no longer writing files, we do everythign at runtime.  
+- NO I/O, no longer writing files, we do everything at runtime.  
 
 ## Install
 
