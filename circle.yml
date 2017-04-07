@@ -1,10 +1,6 @@
+
 ---
 dependencies:
-  override:
-    - yarn
-  test:
-    override:
-      - yarn test
   cache_directories:
     - ~/.cache/yarn
   override:
@@ -26,8 +22,10 @@ deployment:
       - npm run start
       - npm publish ./
       - echo "doing a patch update!"
+
 machine:
   node:
     version: "7.2.1"
-  environment:
-    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+test:
+  override:
+    - "yarn test"
