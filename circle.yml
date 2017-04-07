@@ -28,4 +28,4 @@ machine:
     version: "7.2.1"
 test:
   override:
-    - "npm"
+    - "npm start"
