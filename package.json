@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "start": "babel src --out-dir build",
+    "prepublish": "npm run start",
     "test": "babel-tap test/*.test.js",
     "lint": "eslint . --ext .js",
     "lint:fix": "npm run lint -- --fix"
