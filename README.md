@@ -29,9 +29,9 @@ npm install react-native-css --dev
 Given the following CSS:
 
 ``` js
-import reactNativeCSS from 'react-native-css';
+import RNC from 'react-native-css';
 
-reactNativeCSS(`
+RNC`
   description {
     margin-bottom: 20px;
     font-size: 18px;
@@ -45,7 +45,7 @@ reactNativeCSS(`
     align-items: center;
     display: block;
   }
-`) 
+`
 
 ```
 
@@ -56,14 +56,12 @@ React-native-css will generate to the following:
 ```  
 # Usage
 ```js
-/import reactNativeCSS from 'react-native-css';
-
-
+import RNC from 'react-native-css';
 
 class SearchPage extends Component {
   render() {
     const { color, fontSize } = this.props;
-      const styles = reactNativeCSS(`
+      const styles = RNC`
         description {
           margin-bottom: 20px;
           font-size: ${fontSize}
@@ -77,7 +75,7 @@ class SearchPage extends Component {
           align-items: center;
           display: block;
         }
-      `) 
+      `;
 
     return (
       <View style={styles.container}>

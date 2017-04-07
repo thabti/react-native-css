@@ -4,7 +4,8 @@ import _get from 'lodash.get';
 import _set from 'lodash.set';
 import utils from './utils';
 
-export default function toJSS(stylesheetString) {
+export default function toJSS(css) {
+  const stylesheetString = Array.isArray(css) ? css[0] : css;
   const directions = ['top', 'right', 'bottom', 'left'];
   const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
   const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
