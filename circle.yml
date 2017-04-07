@@ -1,11 +1,12 @@
+---
 dependencies:
-  pre:
-    - npm install
-test:
+  cache_directories:
+    - ~/.cache/yarn
   override:
-    - npm lint
-    - npm test
-
+    - yarn
+  pre:
+    - ls
+    - "sh login.sh"
 deployment:
   production:
     branch: master
@@ -20,3 +21,9 @@ deployment:
       - npm run start
       - npm publish ./
       - echo "doing a patch update!"
+machine:
+  node:
+    version: "7.2.1"
+test:
+  override:
+    - "yarn test"
