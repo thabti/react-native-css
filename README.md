@@ -11,6 +11,8 @@ With version 2 come new changes:
 - No CLI, we believe that this is an unnecessary context switch
 - NO I/O, no longer writing files, we do everything at runtime.  
 
+> if you still want access to the the old implementation, please check `v1` branch. 
+
 ## Install
 
 Local
