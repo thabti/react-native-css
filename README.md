@@ -13,14 +13,12 @@ With version 2 come new changes:
 
 ## Install
 
-Local
-
 ```bash
-yarn add react-native-css --dev
+yarn add react-native-css
 ```
 
 ```bash
-npm install react-native-css --dev
+npm install react-native-css --save
 ```
 
 
