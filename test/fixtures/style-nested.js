@@ -1,1 +1,0 @@
-module.exports = require('react-native').StyleSheet.create({"regulations":{"textAlign":"center","foo":{"alignItems":"center","alignSelf":"center","button":{"justifyContent":"center"}}}});

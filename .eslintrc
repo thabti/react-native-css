@@ -1,0 +1,39 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "rules": {
+    "comma-dangle": 0,
+    "import/no-extraneous-dependencies": 0,
+    "import/extensions": 0,
+    "import/no-unresolved": 0,
+    "import/prefer-default-export": 0,
+		"import/first": 0,
+		"no-loop-func": 0,
+    "strict": 0,
+    "no-plusplus": 0,
+    "no-param-reassign": 0,
+    "no-multi-assign": 0,
+    "no-useless-escape": 0,
+    "no-restricted-syntax": 0,
+    "no-continue": 1,
+    "radix": 1,
+		"no-use-before-define": 0
+  },
+  "ecmaFeatures": {
+    "classes": true
+  },
+  "parserOptions":{
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "globals": {
+    "expect": true,
+    "browser": true,
+    "sinon": true
+  },
+  "env": {
+    "mocha": true,
+    "amd": true
+  }
+}

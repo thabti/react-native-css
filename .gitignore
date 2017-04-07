@@ -5,3 +5,4 @@ test/fixtures/*.js
 .idea
 npm-debug.log
 .vscode
+build

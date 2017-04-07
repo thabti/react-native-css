@@ -1,28 +1,28 @@
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+const _createClass = (function () { function defineProperties(target, props) { for (let i = 0; i < props.length; i++) { const descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }());
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+const _fs = require('fs');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+const _fs2 = _interopRequireDefault(_fs);
 
-var _fs = require('fs');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _fs2 = _interopRequireDefault(_fs);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var Utils = (function () {
+const Utils = (function () {
   function Utils() {
     _classCallCheck(this, Utils);
   }
 
   _createClass(Utils, null, [{
-    key: "arrayContains",
+    key: 'arrayContains',
     value: function arrayContains(value, arr) {
-      for (var i = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         if (value === arr[i]) {
           return true;
         }
@@ -30,36 +30,35 @@ var Utils = (function () {
       return false;
     }
   }, {
-    key: "clean",
+    key: 'clean',
     value: function clean(string) {
-      return string.replace(/\r?\n|\r/g, "");
+      return string.replace(/\r?\n|\r/g, '');
     }
   }, {
-    key: "readFile",
+    key: 'readFile',
     value: function readFile(file, cb) {
-      _fs2["default"].readFile(file, "utf8", cb);
+      _fs2.default.readFile(file, 'utf8', cb);
     }
   }, {
-    key: "outputReactFriendlyStyle",
+    key: 'outputReactFriendlyStyle',
     value: function outputReactFriendlyStyle(style, outputFile, prettyPrint, literalObject) {
-      var indentation = prettyPrint ? 4 : 0;
-      var jsonOutput = JSON.stringify(style, null, indentation);
-      var output = "module.exports = ";
-      output += literalObject ? "" + jsonOutput : "require('react-native').StyleSheet.create(" + jsonOutput + ");";
+      const indentation = prettyPrint ? 4 : 0;
+      const jsonOutput = JSON.stringify(style, null, indentation);
+      let output = 'module.exports = ';
+      output += literalObject ? `${jsonOutput}` : `require('react-native').StyleSheet.create(${jsonOutput});`;
       // Write to file
-      _fs2["default"].writeFileSync(outputFile, output);
+      _fs2.default.writeFileSync(outputFile, output);
       return output;
     }
   }, {
-    key: "contains",
+    key: 'contains',
     value: function contains(string, needle) {
-      var search = string.match(needle);
+      const search = string.match(needle);
       return search && search.length > 0;
     }
   }]);
 
   return Utils;
-})();
+}());
 
-exports["default"] = Utils;
-module.exports = exports["default"];
+exports.default = Utils;

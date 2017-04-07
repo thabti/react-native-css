@@ -3,386 +3,283 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+exports.default = toJSS;
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+const _parse = require('css/lib/parse');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+const _parse2 = _interopRequireDefault(_parse);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+const _toCamelCase = require('to-camel-case');
 
-var _cssParse = require('css-parse');
+const _toCamelCase2 = _interopRequireDefault(_toCamelCase);
 
-var _cssParse2 = _interopRequireDefault(_cssParse);
+const _utils = require('./utils');
 
-var _toCamelCase = require('to-camel-case');
+const _utils2 = _interopRequireDefault(_utils);
 
-var _toCamelCase2 = _interopRequireDefault(_toCamelCase);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _utilsJs = require('./utils.js');
+function toJSS(stylesheetString) {
+  const directions = ['top', 'right', 'bottom', 'left'];
+  const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
+  const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
+  // special properties and shorthands that need to be broken down separately
+  const specialProperties = {};
+  ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach((name) => {
+    specialProperties[name] = {
+      regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
+      map: {
+        1: `${name}-width`,
+        3: name == 'border' ? `${name}-style` : null,
+        4: `${name}-color`
+      }
+    };
+  });
 
-var _utilsJs2 = _interopRequireDefault(_utilsJs);
+  directions.forEach((dir) => {
+    numberize.push(`border-${dir}-width`);
+    changeArr.forEach((prop) => {
+      numberize.push(`${prop}-${dir}`);
+    });
+  });
 
-var _lodashGet = require('lodash.get');
+  // map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
+  const directionMaps = {
+    'border-radius': {
+      Top: 'top-left',
+      Right: 'top-right',
+      Bottom: 'bottom-right',
+      Left: 'bottom-left'
+    }
+  };
 
-var _lodashGet2 = _interopRequireDefault(_lodashGet);
-
-var _lodashSet = require('lodash.set');
-
-var _lodashSet2 = _interopRequireDefault(_lodashSet);
-
-var ReactNativeCss = (function () {
-  function ReactNativeCss() {
-    _classCallCheck(this, ReactNativeCss);
+  // Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
+  function directionToPropertyName(property, direction) {
+    const names = property.split('-');
+    names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
+    return (0, _toCamelCase2.default)(names.join('-'));
   }
 
-  _createClass(ReactNativeCss, [{
-    key: 'parseSync',
-    value: function parseSync(input) {
-      if (_utilsJs2['default'].contains(input, /scss/)) {
-        var _require$renderSync = require('node-sass').renderSync({
-          file: input,
-          outputStyle: 'compressed'
-        });
+  // CSS properties that are not supported by React Native
+  // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
+  const unsupported = ['display'];
 
-        var css = _require$renderSync.css;
+  const nonMatching = {
+    'flex-grow': 'flex',
+    'text-decoration': 'textDecorationLine',
+    'vertical-align': 'textVerticalAlign'
+  };
 
-        var styleSheet = this.toJSS(css.toString());
-        return styleSheet;
-      }
-    }
-  }, {
-    key: 'parse',
-    value: function parse(input, output, prettyPrint, literalObject, cb) {
-      if (output === undefined) output = './style.js';
-      if (prettyPrint === undefined) prettyPrint = false;
+  let _ParseCSS = (0, _parse2.default)(_utils2.default.clean(stylesheetString)),
+    stylesheet = _ParseCSS.stylesheet;
 
-      var _this = this;
+  const JSONResult = {};
 
-      if (literalObject === undefined) literalObject = false;
+  let _iteratorNormalCompletion = true;
+  let _didIteratorError = false;
+  let _iteratorError;
 
-      if (_utilsJs2['default'].contains(input, /scss/)) {
-        var _require$renderSync2 = require('node-sass').renderSync({
-          file: input,
-          outputStyle: 'compressed'
-        });
+  try {
+    for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var rule = _step.value;
 
-        var css = _require$renderSync2.css;
+      if (rule.type !== 'rule') continue;
 
-        var styleSheet = this.toJSS(css.toString());
-        _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-
-        if (cb) {
-          cb(styleSheet);
-        }
-      } else {
-        _utilsJs2['default'].readFile(input, function (err, data) {
-          if (err) {
-            console.error(err);
-            process.exit();
-          }
-          var styleSheet = _this.toJSS(data);
-          _utilsJs2['default'].outputReactFriendlyStyle(styleSheet, output, prettyPrint, literalObject);
-
-          if (cb) {
-            cb(styleSheet);
-          }
-        });
-      }
-    }
-  }, {
-    key: 'toJSS',
-    value: function toJSS(stylesheetString) {
-      var directions = ['top', 'right', 'bottom', 'left'];
-      var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
-      var numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
-      //special properties and shorthands that need to be broken down separately
-      var specialProperties = {};
-      ['border', 'border-top', 'border-right', 'border-bottom', 'border-left'].forEach(function (name) {
-        specialProperties[name] = {
-          regex: /^\s*([0-9]+)(px)?\s+(solid|dotted|dashed)?\s*([a-z0-9#,\(\)\.\s]+)\s*$/i,
-          map: {
-            1: name + '-width',
-            3: name == 'border' ? name + '-style' : null,
-            4: name + '-color'
-          }
-        };
-      });
-
-      directions.forEach(function (dir) {
-        numberize.push('border-' + dir + '-width');
-        changeArr.forEach(function (prop) {
-          numberize.push(prop + '-' + dir);
-        });
-      });
-
-      //map of properties that when expanded use different directions than the default Top,Right,Bottom,Left.
-      var directionMaps = {
-        'border-radius': {
-          'Top': 'top-left',
-          'Right': 'top-right',
-          'Bottom': 'bottom-right',
-          'Left': 'bottom-left'
-        }
-      };
-
-      //Convert the shorthand property to the individual directions, handles edge cases, i.e. border-width and border-radius
-      function directionToPropertyName(property, direction) {
-        var names = property.split('-');
-        names.splice(1, 0, directionMaps[property] ? directionMaps[property][direction] : direction);
-        return (0, _toCamelCase2['default'])(names.join('-'));
-      }
-
-      // CSS properties that are not supported by React Native
-      // The list of supported properties is at https://facebook.github.io/react-native/docs/style.html#supported-properties
-      var unsupported = ['display'];
-
-      var nonMatching = {
-        'flex-grow': 'flex',
-        'text-decoration': 'textDecorationLine',
-        'vertical-align': 'textVerticalAlign'
-      };
-
-      var _ParseCSS = (0, _cssParse2['default'])(_utilsJs2['default'].clean(stylesheetString));
-
-      var stylesheet = _ParseCSS.stylesheet;
-
-      var JSONResult = {};
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      let _iteratorNormalCompletion2 = true;
+      let _didIteratorError2 = false;
+      let _iteratorError2;
 
       try {
-        for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var rule = _step.value;
+        const _loop = function _loop() {
+          let selector = _step2.value;
 
-          if (rule.type !== 'rule') continue;
+          selector = selector.replace(/\.|#/g, '');
 
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+          let styles = void 0;
+          // check if there are any selectors with empty spaces, meaning they should be nested
+          const composedSelector = selector.match(/\s+(\S)+/g);
+
+          if (composedSelector) {
+            // get the first selector from the nested selector
+            let selectorPath = selector.match(/^\S+/)[0];
+            while (composedSelector.length) {
+              const currentSelector = composedSelector.shift().replace(/\s+/, '');
+              selectorPath += `[${currentSelector}]`;
+            }
+
+            // we don't have to be smart here. It's either an object or undefined.
+            if (!_get(JSONResult, selectorPath)) {
+              _set(JSONResult, selectorPath, {});
+            }
+            styles = _get(JSONResult, selectorPath);
+          } else {
+            styles = JSONResult[selector] = JSONResult[selector] || {};
+          }
+
+          const declarationsToAdd = [];
+
+          let _iteratorNormalCompletion3 = true;
+          let _didIteratorError3 = false;
+          let _iteratorError3;
 
           try {
-            var _loop = function () {
-              var selector = _step2.value;
+            const _loop2 = function _loop2() {
+              const declaration = _step3.value;
 
-              selector = selector.replace(/\.|#/g, '');
+              if (declaration.type !== 'declaration') return 'continue';
 
-              var styles = undefined;
-              // check if there are any selectors with empty spaces, meaning they should be nested
-              var composedSelector = selector.match(/\s+(\S)+/g);
+              const value = declaration.value;
+              const property = declaration.property;
 
-              if (composedSelector) {
-                // get the first selector from the nested selector
-                var selectorPath = selector.match(/^\S+/)[0];
-                while (composedSelector.length) {
-                  var currentSelector = composedSelector.shift().replace(/\s+/, '');
-                  selectorPath += '[' + currentSelector + ']';
+              if (specialProperties[property]) {
+                let special = specialProperties[property],
+                  matches = special.regex.exec(value);
+                if (matches) {
+                  if (typeof special.map === 'function') {
+                    special.map(matches, styles, rule.declarations);
+                  } else {
+                    for (const key in special.map) {
+                      if (matches[key] && special.map[key]) {
+                        rule.declarations.push({
+                          property: special.map[key],
+                          value: matches[key],
+                          type: 'declaration'
+                        });
+                      }
+                    }
+                  }
+                  return 'continue';
                 }
-
-                // we don't have to be smart here. It's either an object or undefined.
-                if (!(0, _lodashGet2['default'])(JSONResult, selectorPath)) {
-                  (0, _lodashSet2['default'])(JSONResult, selectorPath, {});
-                }
-                styles = (0, _lodashGet2['default'])(JSONResult, selectorPath);
-              } else {
-                styles = JSONResult[selector] = JSONResult[selector] || {};
               }
 
-              var declarationsToAdd = [];
+              if (_utils2.default.arrayContains(property, unsupported)) return 'continue';
 
-              _iteratorNormalCompletion3 = true;
-              _didIteratorError3 = false;
-              _iteratorError3 = undefined;
+              if (nonMatching[property]) {
+                rule.declarations.push({
+                  property: nonMatching[property],
+                  value,
+                  type: 'declaration'
+                });
+                return 'continue';
+              }
 
-              try {
-                var _loop2 = function () {
-                  var declaration = _step3.value;
-
-                  if (declaration.type !== 'declaration') return 'continue';
-
-                  var value = declaration.value;
-                  var property = declaration.property;
-
-                  if (specialProperties[property]) {
-                    var special = specialProperties[property],
-                        matches = special.regex.exec(value);
-                    if (matches) {
-                      if (typeof special.map === 'function') {
-                        special.map(matches, styles, rule.declarations);
-                      } else {
-                        for (var key in special.map) {
-                          if (matches[key] && special.map[key]) {
-                            rule.declarations.push({
-                              property: special.map[key],
-                              value: matches[key],
-                              type: 'declaration'
-                            });
-                          }
-                        }
-                      }
-                      return 'continue';
-                    }
-                  }
-
-                  if (_utilsJs2['default'].arrayContains(property, unsupported)) return 'continue';
-
-                  if (nonMatching[property]) {
-                    rule.declarations.push({
-                      property: nonMatching[property],
-                      value: value,
-                      type: 'declaration'
-                    });
-                    return 'continue';
-                  }
-
-                  if (_utilsJs2['default'].arrayContains(property, numberize)) {
-                    value = value.replace(/px|\s*/g, '');
-
-                    styles[(0, _toCamelCase2['default'])(property)] = parseFloat(value);
-                  } else if (_utilsJs2['default'].arrayContains(property, changeArr)) {
-                    baseDeclaration = {
-                      type: 'description'
-                    };
-                    values = value.replace(/px/g, '').split(/[\s,]+/);
-
-                    values.forEach(function (value, index, arr) {
-                      arr[index] = parseInt(value);
-                    });
-
-                    length = values.length;
-
-                    if (length === 1) {
-
-                      styles[(0, _toCamelCase2['default'])(property)] = values[0];
-                    }
-
-                    if (length === 2) {
-                      _arr = ['Top', 'Bottom'];
-
-                      for (_i = 0; _i < _arr.length; _i++) {
-                        var prop = _arr[_i];
-                        styles[directionToPropertyName(property, prop)] = values[0];
-                      }
-
-                      _arr2 = ['Left', 'Right'];
-                      for (_i2 = 0; _i2 < _arr2.length; _i2++) {
-                        var prop = _arr2[_i2];
-                        styles[directionToPropertyName(property, prop)] = values[1];
-                      }
-                    }
-
-                    if (length === 3) {
-                      _arr3 = ['Left', 'Right'];
-
-                      for (_i3 = 0; _i3 < _arr3.length; _i3++) {
-                        var prop = _arr3[_i3];
-                        styles[directionToPropertyName(property, prop)] = values[1];
-                      }
-
-                      styles[directionToPropertyName(property, 'Top')] = values[0];
-                      styles[directionToPropertyName(property, 'Bottom')] = values[2];
-                    }
-
-                    if (length === 4) {
-                      ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-                        styles[directionToPropertyName(property, prop)] = values[index];
-                      });
-                    }
-                  } else {
-                    if (!isNaN(declaration.value) && property !== 'font-weight') {
-                      declaration.value = parseFloat(declaration.value);
-                    }
-
-                    styles[(0, _toCamelCase2['default'])(property)] = declaration.value;
-                  }
+              if (_utils2.default.arrayContains(property, numberize)) {
+                var _value = _value.replace(/px|\s*/g, '');
+                styles[(0, _toCamelCase2.default)(property)] = parseFloat(_value);
+              } else if (_utils2.default.arrayContains(property, changeArr)) {
+                const baseDeclaration = {
+                  type: 'description'
                 };
 
-                for (_iterator3 = rule.declarations[Symbol.iterator](); !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                  var _ret2 = _loop2();
+                values = value.replace(/px/g, '').split(/[\s,]+/);
 
-                  if (_ret2 === 'continue') continue;
+
+                values.forEach((value, index, arr) => {
+                  arr[index] = parseInt(value);
+                });
+
+                const length = values.length;
+
+                if (length === 1) {
+                  styles[(0, _toCamelCase2.default)(property)] = values[0];
                 }
-              } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-              } finally {
-                try {
-                  if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-                    _iterator3['return']();
+
+                if (length === 2) {
+                  const _arr = ['Top', 'Bottom'];
+
+                  for (let _i = 0; _i < _arr.length; _i++) {
+                    const prop = _arr[_i];
+                    styles[directionToPropertyName(property, prop)] = values[0];
                   }
-                } finally {
-                  if (_didIteratorError3) {
-                    throw _iteratorError3;
+
+                  const _arr2 = ['Left', 'Right'];
+                  for (let _i2 = 0; _i2 < _arr2.length; _i2++) {
+                    const _prop = _arr2[_i2];
+                    styles[directionToPropertyName(property, _prop)] = values[1];
                   }
                 }
+
+                if (length === 3) {
+                  const _arr3 = ['Left', 'Right'];
+
+                  for (let _i3 = 0; _i3 < _arr3.length; _i3++) {
+                    const _prop2 = _arr3[_i3];
+                    styles[directionToPropertyName(property, _prop2)] = values[1];
+                  }
+
+                  styles[directionToPropertyName(property, 'Top')] = values[0];
+                  styles[directionToPropertyName(property, 'Bottom')] = values[2];
+                }
+
+                if (length === 4) {
+                  ['Top', 'Right', 'Bottom', 'Left'].forEach((prop, index) => {
+                    styles[directionToPropertyName(property, prop)] = values[index];
+                  });
+                }
+              } else {
+                if (!isNaN(declaration.value) && property !== 'font-weight') {
+                  declaration.value = parseFloat(declaration.value);
+                }
+
+                styles[(0, _toCamelCase2.default)(property)] = declaration.value;
               }
             };
 
-            for (var _iterator2 = rule.selectors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var _iteratorNormalCompletion3;
+            for (var _iterator3 = rule.declarations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              const _ret2 = _loop2();
 
-              var _didIteratorError3;
-
-              var _iteratorError3;
-
-              var _iterator3, _step3;
-
-              var value;
-              var baseDeclaration;
-              var values;
-              var length;
-
-              var _arr;
-
-              var _i;
-
-              var _arr2;
-
-              var _i2;
-
-              var _arr3;
-
-              var _i3;
-
-              _loop();
+              if (_ret2 === 'continue') continue;
             }
           } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                _iterator2['return']();
+              if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
               }
             } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
+              if (_didIteratorError3) {
+                throw _iteratorError3;
               }
             }
           }
+        };
+
+        for (var _iterator2 = rule.selectors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var values;
+
+          _loop();
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator['return']) {
-            _iterator['return']();
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
-
-      return JSONResult;
     }
-  }]);
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
 
-  return ReactNativeCss;
-})();
-
-exports['default'] = ReactNativeCss;
-module.exports = exports['default'];
+  return JSONResult;
+}
