@@ -4,7 +4,7 @@ dependencies:
   cache_directories:
     - ~/.cache/yarn
   override:
-    - yarn
+    - npm install
   pre:
     - ls
     - "sh login.sh"
@@ -28,4 +28,4 @@ machine:
     version: "7.2.1"
 test:
   override:
-    - "yarn test"
+    - "npm test"
