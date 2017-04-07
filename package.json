@@ -8,7 +8,8 @@
     "prepublish": "npm run start",
     "test": "babel-tap test/*.test.js",
     "lint": "eslint . --ext .js",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "echo": "echo 'hello'"
   },
   "author": "Sabeur Thabti",
   "license": "MIT",
