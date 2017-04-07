@@ -1,5 +1,10 @@
 ---
 dependencies:
+  override:
+    - yarn
+  test:
+    override:
+      - yarn test
   cache_directories:
     - ~/.cache/yarn
   override:
@@ -24,6 +29,5 @@ deployment:
 machine:
   node:
     version: "7.2.1"
-test:
-  override:
-    - "yarn test"
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
