@@ -27,7 +27,8 @@ var _utils2 = _interopRequireDefault(_utils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function toJSS(stylesheetString) {
+function toJSS(css) {
+  var stylesheetString = Array.isArray(css) ? css[0] : css;
   var directions = ['top', 'right', 'bottom', 'left'];
   var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
   var numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
