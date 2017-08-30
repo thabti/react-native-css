@@ -1,10 +1,8 @@
 
-# NO LONGER BEING DEVELOPED
-Time is a precious commodity and I think the community has a lot of developement in how to style React-Native. 
+# Babel-plugin
+ The awesome @danilosterrapid7 create a babel-plugin for React-native-css:
 
-Please try: 
-
-https://github.com/styled-components/styled-components#react-native
+https://www.npmjs.com/package/babel-plugin-react-native-sass-classname
 
 
 # react-native-css [![Circle CI](https://circleci.com/gh/sabeurthabti/react-native-css.svg?style=svg&circle-token=a140907997e6a37c6c5ec75f04e8150cef049ff6)](https://circleci.com/gh/sabeurthabti/react-native-css) [![NPM](https://img.shields.io/npm/dm/react-native-css.svg?style=flat-square)](https://www.npmjs.com/package/react-native-css)
