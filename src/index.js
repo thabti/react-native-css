@@ -62,10 +62,13 @@ export default function toJSS(css) {
   const { stylesheet } = ParseCSS(utils.clean(stylesheetString));
   const JSONResult = {};
 
-  for (const rule of stylesheet.rules) {
+  for (let ruleIter = 0; ruleIter < stylesheet.rules.length; ruleIter++) {
+    const rule = stylesheet.rules[ruleIter];
+
     if (rule.type !== 'rule') continue;
 
-    for (let selector of rule.selectors) {
+    for (let selectorIter = 0; selectorIter < rule.selectors.length; selectorIter++) {
+      let selector = rule.selectors[selectorIter];
       selector = selector.replace(/\.|#/g, '');
 
       let styles;
@@ -89,8 +92,9 @@ export default function toJSS(css) {
         styles = (JSONResult[selector] = JSONResult[selector] || {});
       }
 
+      for (let declarationIter = 0; declarationIter < rule.declarations.length; declarationIter++) {
+        const declaration = rule.declarations[declarationIter];
 
-      for (const declaration of rule.declarations) {
         if (declaration.type !== 'declaration') continue;
 
         const value = declaration.value;
@@ -140,26 +144,26 @@ export default function toJSS(css) {
           });
 
           const length = values.length;
+          const horizontalPositionProps = ['Left', 'Right'];
 
           if (length === 1) {
             styles[toCamelCase(property)] = values[0];
           }
 
           if (length === 2) {
-            for (const prop of ['Top', 'Bottom']) {
+            const verticalPositionProps = ['Top', 'Bottom'];
+            verticalPositionProps.forEach((prop) => {
               styles[directionToPropertyName(property, prop)] = values[0];
-            }
-
-            for (const prop of ['Left', 'Right']) {
+            });
+            horizontalPositionProps.forEach((prop) => {
               styles[directionToPropertyName(property, prop)] = values[1];
-            }
+            });
           }
 
           if (length === 3) {
-            for (const prop of ['Left', 'Right']) {
+            horizontalPositionProps.forEach((prop) => {
               styles[directionToPropertyName(property, prop)] = values[1];
-            }
-
+            });
             styles[directionToPropertyName(property, 'Top')] = values[0];
             styles[directionToPropertyName(property, 'Bottom')] = values[2];
           }
