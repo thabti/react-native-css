@@ -40,3 +40,15 @@ var Utils = function () {
 }();
 
 exports.default = Utils;
+var handleTags = exports.handleTags = function handleTags(strings) {
+  var result = '';
+
+  for (var i = 0; i < strings.length; i++) {
+    result += strings[i];
+    if (i < (arguments.length <= 1 ? 0 : arguments.length - 1)) {
+      result += arguments.length <= i + 1 ? undefined : arguments[i + 1];
+    }
+  }
+
+  return result;
+};

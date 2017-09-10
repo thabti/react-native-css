@@ -28,7 +28,15 @@ var _utils2 = _interopRequireDefault(_utils);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function toJSS(css) {
-  var stylesheetString = Array.isArray(css) ? css[0] : css;
+  for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    values[_key - 1] = arguments[_key];
+  }
+
+  var stylesheetString = Array.isArray(css) ? _utils.handleTags.apply(undefined, [css].concat(values)) : css;
+
+  var _ParseCSS = (0, _parse2.default)(_utils2.default.clean(stylesheetString)),
+      stylesheet = _ParseCSS.stylesheet;
+
   var directions = ['top', 'right', 'bottom', 'left'];
   var changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
   var numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
@@ -81,9 +89,6 @@ function toJSS(css) {
     'text-decoration': 'textDecorationLine',
     'vertical-align': 'textVerticalAlign'
   };
-
-  var _ParseCSS = (0, _parse2.default)(_utils2.default.clean(stylesheetString)),
-      stylesheet = _ParseCSS.stylesheet;
 
   var JSONResult = {};
 
@@ -177,17 +182,17 @@ function toJSS(css) {
                 var valueReplaced = value.replace(/px|\s*/g, '');
                 styles[(0, _toCamelCase2.default)(property)] = parseFloat(valueReplaced);
               } else if (_utils2.default.arrayContains(property, changeArr)) {
-                var values = value.replace(/px/g, '').split(/[\s,]+/);
+                var _values = value.replace(/px/g, '').split(/[\s,]+/);
 
-                values.forEach(function (v, index, arr) {
+                _values.forEach(function (v, index, arr) {
                   arr[index] = parseInt(v);
                   return arr;
                 });
 
-                var length = values.length;
+                var length = _values.length;
 
                 if (length === 1) {
-                  styles[(0, _toCamelCase2.default)(property)] = values[0];
+                  styles[(0, _toCamelCase2.default)(property)] = _values[0];
                 }
 
                 if (length === 2) {
@@ -195,13 +200,13 @@ function toJSS(css) {
 
                   for (var _i = 0; _i < _arr.length; _i++) {
                     var prop = _arr[_i];
-                    styles[directionToPropertyName(property, prop)] = values[0];
+                    styles[directionToPropertyName(property, prop)] = _values[0];
                   }
 
                   var _arr2 = ['Left', 'Right'];
                   for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
                     var _prop = _arr2[_i2];
-                    styles[directionToPropertyName(property, _prop)] = values[1];
+                    styles[directionToPropertyName(property, _prop)] = _values[1];
                   }
                 }
 
@@ -210,16 +215,16 @@ function toJSS(css) {
 
                   for (var _i3 = 0; _i3 < _arr3.length; _i3++) {
                     var _prop2 = _arr3[_i3];
-                    styles[directionToPropertyName(property, _prop2)] = values[1];
+                    styles[directionToPropertyName(property, _prop2)] = _values[1];
                   }
 
-                  styles[directionToPropertyName(property, 'Top')] = values[0];
-                  styles[directionToPropertyName(property, 'Bottom')] = values[2];
+                  styles[directionToPropertyName(property, 'Top')] = _values[0];
+                  styles[directionToPropertyName(property, 'Bottom')] = _values[2];
                 }
 
                 if (length === 4) {
                   ['Top', 'Right', 'Bottom', 'Left'].forEach(function (prop, index) {
-                    styles[directionToPropertyName(property, prop)] = values[index];
+                    styles[directionToPropertyName(property, prop)] = _values[index];
                   });
                 }
               } else {
