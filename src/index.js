@@ -2,10 +2,12 @@ import ParseCSS from 'css/lib/parse';
 import toCamelCase from 'to-camel-case';
 import _get from 'lodash.get';
 import _set from 'lodash.set';
-import utils from './utils';
+import utils, { handleTags } from './utils';
 
-export default function toJSS(css) {
-  const stylesheetString = Array.isArray(css) ? css[0] : css;
+export default function toJSS(css, ...values) {
+  const stylesheetString = Array.isArray(css) ? handleTags(css, ...values) : css;
+  const { stylesheet } = ParseCSS(utils.clean(stylesheetString));
+
   const directions = ['top', 'right', 'bottom', 'left'];
   const changeArr = ['margin', 'padding', 'border-width', 'border-radius'];
   const numberize = ['width', 'height', 'font-size', 'line-height'].concat(directions);
@@ -17,8 +19,8 @@ export default function toJSS(css) {
       map: {
         1: `${name}-width`,
         3: name === 'border' ? `${name}-style` : null,
-        4: `${name}-color`
-      }
+        4: `${name}-color`,
+      },
     };
   });
 
@@ -36,8 +38,8 @@ export default function toJSS(css) {
       Top: 'top-left',
       Right: 'top-right',
       Bottom: 'bottom-right',
-      Left: 'bottom-left'
-    }
+      Left: 'bottom-left',
+    },
   };
 
   // Convert the shorthand property to the individual directions, handles edge cases,
@@ -56,10 +58,9 @@ export default function toJSS(css) {
   const nonMatching = {
     'flex-grow': 'flex',
     'text-decoration': 'textDecorationLine',
-    'vertical-align': 'textVerticalAlign'
+    'vertical-align': 'textVerticalAlign',
   };
 
-  const { stylesheet } = ParseCSS(utils.clean(stylesheetString));
   const JSONResult = {};
 
   for (const rule of stylesheet.rules) {
@@ -86,9 +87,8 @@ export default function toJSS(css) {
         }
         styles = _get(JSONResult, selectorPath);
       } else {
-        styles = (JSONResult[selector] = JSONResult[selector] || {});
+        styles = JSONResult[selector] = JSONResult[selector] || {};
       }
-
 
       for (const declaration of rule.declarations) {
         if (declaration.type !== 'declaration') continue;
@@ -108,7 +108,7 @@ export default function toJSS(css) {
                   rule.declarations.push({
                     property: special.map[key],
                     value: matches[key],
-                    type: 'declaration'
+                    type: 'declaration',
                   });
                 }
               }
@@ -123,7 +123,7 @@ export default function toJSS(css) {
           rule.declarations.push({
             property: nonMatching[property],
             value,
-            type: 'declaration'
+            type: 'declaration',
           });
           continue;
         }

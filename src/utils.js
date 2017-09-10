@@ -1,5 +1,4 @@
 export default class Utils {
-
   static arrayContains(value, arr) {
     for (let i = 0; i < arr.length; i++) {
       if (value === arr[i]) {
@@ -18,3 +17,16 @@ export default class Utils {
     return search && search.length > 0;
   }
 }
+
+export const handleTags = (strings, ...values) => {
+  let result = '';
+
+  for (let i = 0; i < strings.length; i++) {
+    result += strings[i];
+    if (i < values.length) {
+      result += values[i];
+    }
+  }
+
+  return result;
+};
