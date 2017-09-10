@@ -3,6 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
 exports.default = toJSS;
 
 var _parse = require('css/lib/parse');
@@ -97,7 +102,7 @@ function toJSS(css) {
   var _iteratorError = undefined;
 
   try {
-    for (var _iterator = stylesheet.rules[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+    for (var _iterator = (0, _getIterator3.default)(stylesheet.rules), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var rule = _step.value;
 
       if (rule.type !== 'rule') continue;
@@ -236,7 +241,7 @@ function toJSS(css) {
               }
             };
 
-            for (var _iterator3 = rule.declarations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            for (var _iterator3 = (0, _getIterator3.default)(rule.declarations), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
               var _ret2 = _loop2();
 
               if (_ret2 === 'continue') continue;
@@ -257,7 +262,7 @@ function toJSS(css) {
           }
         };
 
-        for (var _iterator2 = rule.selectors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        for (var _iterator2 = (0, _getIterator3.default)(rule.selectors), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           _loop();
         }
       } catch (err) {
